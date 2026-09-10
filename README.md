@@ -122,7 +122,7 @@ Chi-square test: χ²=258.43, **p=3.78×10⁻⁵⁸** — strongest predictor in
 ### Fare vs Survival (Q5, Q6)
 - Median fare, survivors: **£26.00** vs. non-survivors: **£10.50**
 - Mann-Whitney U: **p=5.96×10⁻²²** — survivors paid significantly higher fares
-- Point-biserial r=0.255 — moderate positive correlation
+- Point-biserial r=0.255 — weak positive correlation (r < 0.3; fare is a proxy for class)
 - Max fare in dataset: **£512.33** (first-class cabin group — retained, not errors)
 
 ### Family Size (Q8)
@@ -131,9 +131,9 @@ Chi-square test: χ²=258.43, **p=3.78×10⁻⁵⁸** — strongest predictor in
 - Family of 7+: **0–13%** survival (large lower-class families)
 
 ### Embarkation (Q7)
-- Cherbourg: **55%** survival (disproportionately 1st class)
-- Southampton: **34%** survival (majority of passengers, mixed class)
-- Queenstown: **39%** survival (mostly 3rd class)
+- Cherbourg: **55.4%** survival (disproportionately 1st class)
+- Southampton: **33.7%** survival (majority of passengers, mixed class)
+- Queenstown: **39.0%** survival (mostly 3rd class)
 
 ---
 
@@ -155,7 +155,7 @@ All tests at α = 0.05 significance level.
 
 | Decision | Action | Justification |
 |---|---|---|
-| D1 | Dropped 5 redundant columns (class, alive, embark_town, who, adult_male) | Derived from retained columns — carry no independent information |
+| D1 | Dropped 6 redundant/derived columns (class, alive, embark_town, who, adult_male, age_missing) | Derived from retained columns — carry no independent information |
 | D2 | Imputed age with group median (pclass × sex) | 20% missing; group median is more accurate than global mean; dropping 177 rows loses too much data |
 | D3 | Dropped 2 rows with missing Embarked | Only 2 rows — negligible impact; imputation would be unreliable |
 | D4 | Dropped Deck column | 77.2% missing — analytically unrecoverable |
@@ -169,7 +169,7 @@ All tests at α = 0.05 significance level.
 | Tool | Version | Purpose |
 |---|---|---|
 | Python | 3.12 | Runtime |
-| Pandas | 2.2.2 | Data manipulation |
+| Pandas | 2.1.4 | Data manipulation |
 | NumPy | 1.26.4 | Numerical computing |
 | Matplotlib | 3.8.2 | Base visualization |
 | Seaborn | 0.13.2 | Statistical visualization |

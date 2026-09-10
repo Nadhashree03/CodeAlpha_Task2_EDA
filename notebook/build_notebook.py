@@ -1,33 +1,36 @@
 """
 build_notebook.py
 Generates titanic_eda.ipynb programmatically using nbformat.
-Run: python build_notebook.py
+All strings are single-line safe — no multi-line f-strings.
+Run: python build_notebook.py  (from notebook/ directory)
 """
 
 import nbformat
 from nbformat.v4 import new_notebook, new_markdown_cell, new_code_cell
+import os
 
 cells = []
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 1 – Project Overview
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""# 🚢 Titanic Passenger Dataset – Exploratory Data Analysis
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""# 🚢 Titanic Passenger Dataset – Exploratory Data Analysis
 
 ---
 
 ## Section 1 · Project Overview
 
-**Project Title:** Exploratory Data Analysis of the Titanic Passenger Dataset  
-**Internship:** CodeAlpha Data Analytics Internship — Task 2  
-**Tool Stack:** Python · Pandas · NumPy · Matplotlib · Seaborn · SciPy  
-**Dataset:** Titanic Passenger Data (891 records, 15 variables)  
+**Project Title:** Exploratory Data Analysis of the Titanic Passenger Dataset
+**Internship:** CodeAlpha Data Analytics Internship — Task 2
+**Tool Stack:** Python · Pandas · NumPy · Matplotlib · Seaborn · SciPy
+**Dataset:** Titanic Passenger Data (891 records, 15 variables)
 **Source:** Seaborn built-in dataset (original data from Kaggle / Vanderbilt University Biostatistics)
 
 ---
 
-This notebook performs a structured, end-to-end Exploratory Data Analysis (EDA) on the Titanic passenger dataset.  
-The analysis follows the CodeAlpha Task 2 requirements:
+This notebook performs a structured, end-to-end EDA on the Titanic passenger dataset.
+It covers all five CodeAlpha Task 2 requirements:
 
 | Requirement | Coverage |
 |---|---|
@@ -38,28 +41,31 @@ The analysis follows the CodeAlpha Task 2 requirements:
 | Detect and document data quality issues | Sections 9–12 — missing values, duplicates, cleaning decisions |
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 2 – Objective
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 2 · Objective
 
-**Primary Objective:**  
-To investigate the demographic, socioeconomic, and logistical factors that influenced passenger survival during the Titanic disaster of April 15, 1912, by applying systematic exploratory data analysis techniques.
+**Primary Objective:**
+To investigate the demographic, socioeconomic, and logistical factors that influenced
+passenger survival during the Titanic disaster of April 15, 1912.
 
 **Specific Goals:**
 1. Characterize the passenger population by age, class, sex, and embarkation.
 2. Identify and document all data quality issues present in the dataset.
 3. Quantify survival disparities across key passenger groups.
 4. Test whether observed differences in survival rates are statistically significant.
-5. Derive practical insights that could inform similar emergency preparedness analysis.
+5. Derive practical insights for emergency preparedness analysis.
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 3 – Dataset Information
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 3 · Dataset Information
 
@@ -69,38 +75,39 @@ cells.append(new_markdown_cell("""---
 | Source | Seaborn built-in / Kaggle (original: Vanderbilt Biostatistics) |
 | Rows | 891 passengers |
 | Columns | 15 variables |
-| Time Period | April 10–15, 1912 (voyage and sinking) |
+| Time Period | April 10–15, 1912 |
 | License | Public domain |
 
 ### Variable Dictionary
 
 | Column | Type | Description |
 |---|---|---|
-| `survived` | int (binary) | Survival status: 0 = died, 1 = survived |
-| `pclass` | int (ordinal) | Passenger class: 1 = First, 2 = Second, 3 = Third |
-| `sex` | str (nominal) | Passenger sex: male / female |
-| `age` | float | Age in years (fractional for infants); **~20% missing** |
-| `sibsp` | int | Number of siblings/spouses aboard |
-| `parch` | int | Number of parents/children aboard |
-| `fare` | float | Ticket price in British pounds (1912) |
-| `embarked` | str (nominal) | Port of embarkation: C=Cherbourg, Q=Queenstown, S=Southampton |
-| `class` | str | Categorical version of pclass (First/Second/Third) |
-| `who` | str | Passenger category: man / woman / child |
-| `adult_male` | bool | True if adult male |
-| `deck` | str | Cabin deck letter (A–G); **~77% missing** |
-| `embark_town` | str | Full embarkation town name |
-| `alive` | str | String version of survived (yes/no) |
+| `survived` | int (binary) | 0 = died, 1 = survived |
+| `pclass` | int (ordinal) | 1 = First, 2 = Second, 3 = Third |
+| `sex` | str (nominal) | male / female |
+| `age` | float | Age in years; **~20% missing** |
+| `sibsp` | int | Siblings/spouses aboard |
+| `parch` | int | Parents/children aboard |
+| `fare` | float | Ticket price (£ sterling, 1912) |
+| `embarked` | str (nominal) | C = Cherbourg, Q = Queenstown, S = Southampton |
+| `class` | str | Categorical version of pclass |
+| `who` | str | man / woman / child (derived) |
+| `adult_male` | bool | True if adult male (derived) |
+| `deck` | str | Cabin deck A–G; **~77% missing** |
+| `embark_town` | str | Full embarkation town (derived) |
+| `alive` | str | yes/no version of survived (derived) |
 | `alone` | bool | True if traveling without family |
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 4 – Analytical Questions
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 4 · Analytical Questions
 
-The following 10 questions were defined **before** any analysis to guide the investigation:
+Ten questions defined **before** analysis to guide the investigation:
 
 | # | Question | Task 2 Requirement |
 |---|---|---|
@@ -116,15 +123,13 @@ The following 10 questions were defined **before** any analysis to guide the inv
 | Q10 | Does the combined effect of gender and class reveal survival patterns not visible from either alone? | Multivariate Analysis |
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 5 – Import Libraries
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 5 · Import Libraries\n"))
 
-## Section 5 · Import Libraries
-"""))
-
-cells.append(new_code_cell("""# Standard library
+cells.append(new_code_cell(
+"""# Standard library
 import os
 import warnings
 warnings.filterwarnings('ignore')
@@ -135,9 +140,8 @@ import numpy as np
 
 # Visualization
 import matplotlib
-matplotlib.use('Agg')          # non-interactive backend for saving figures
+matplotlib.use('Agg')   # non-interactive backend — required for saving figures
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 import seaborn as sns
 
 # Statistical testing
@@ -146,10 +150,10 @@ from scipy.stats import chi2_contingency, mannwhitneyu, pointbiserialr, shapiro
 
 # Display settings
 pd.set_option('display.max_columns', 20)
-pd.set_option('display.width', 100)
+pd.set_option('display.width', 120)
 pd.set_option('display.float_format', '{:.2f}'.format)
 
-# Visualization style
+# Plot style
 sns.set_theme(style='whitegrid', palette='muted', font_scale=1.1)
 plt.rcParams.update({
     'figure.dpi': 120,
@@ -159,200 +163,180 @@ plt.rcParams.update({
     'axes.labelsize': 11,
 })
 
-# Output path
+# Visualization output directory (relative to notebook/)
 VIZ_DIR = os.path.join('..', 'visualizations')
 os.makedirs(VIZ_DIR, exist_ok=True)
 
 print('Libraries loaded successfully.')
-print(f'Visualizations will be saved to: {os.path.abspath(VIZ_DIR)}')
+print('Pandas  :', pd.__version__)
+print('NumPy   :', np.__version__)
+print('Seaborn :', sns.__version__)
+print('VIZ_DIR :', os.path.abspath(VIZ_DIR))
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 6 – Load Dataset
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 6 · Load Dataset\n"))
 
-## Section 6 · Load Dataset
-"""))
-
-cells.append(new_code_cell("""# Load the dataset from the data directory
+cells.append(new_code_cell(
+"""# Load from local CSV (relative path from notebook/)
 DATA_PATH = os.path.join('..', 'data', 'titanic.csv')
 df_raw = pd.read_csv(DATA_PATH)
+df = df_raw.copy()   # keep unmodified copy throughout
 
-# Keep an unmodified copy for reference throughout the notebook
-df = df_raw.copy()
-
-print(f'Dataset loaded successfully.')
-print(f'Shape: {df.shape[0]:,} rows × {df.shape[1]} columns')
+print('Dataset loaded from:', os.path.abspath(DATA_PATH))
+print('Shape:', df.shape[0], 'rows x', df.shape[1], 'columns')
 """))
 
-cells.append(new_code_cell("""# First look at the data
-df.head(10)
-"""))
+cells.append(new_code_cell("# First 10 rows\ndf.head(10)\n"))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 7 – Initial Data Inspection
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 7 · Initial Data Inspection\n"))
 
-## Section 7 · Initial Data Inspection
-"""))
-
-cells.append(new_code_cell("""# Basic shape and column overview
-print('=== DATASET SHAPE ===')
-print(f'Rows    : {df.shape[0]}')
-print(f'Columns : {df.shape[1]}')
+cells.append(new_code_cell(
+"""print('=== SHAPE ===')
+print('Rows   :', df.shape[0])
+print('Cols   :', df.shape[1])
 print()
-
-print('=== COLUMN NAMES ===')
+print('=== COLUMNS ===')
 print(list(df.columns))
 print()
-
 print('=== FIRST 5 ROWS ===')
-print(df.head())
+print(df.head().to_string())
 """))
 
-cells.append(new_code_cell("""# Last 5 rows — useful to detect truncation or loading errors
-print('=== LAST 5 ROWS ===')
-print(df.tail())
+cells.append(new_code_cell(
+"""print('=== LAST 5 ROWS ===')
+print(df.tail().to_string())
 """))
 
-cells.append(new_code_cell("""# Random sample — gives a more representative snapshot than head/tail
-print('=== RANDOM SAMPLE (n=8) ===')
-print(df.sample(8, random_state=42))
+cells.append(new_code_cell(
+"""print('=== RANDOM SAMPLE (n=8, seed=42) ===')
+print(df.sample(8, random_state=42).to_string())
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 8 – Data Structure and Data Types
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 8 · Data Structure and Data Types\n"))
 
-## Section 8 · Data Structure and Data Types
-"""))
-
-cells.append(new_code_cell("""# Detailed dtype and non-null count for every column
-print('=== COLUMN TYPES AND NON-NULL COUNTS ===')
+cells.append(new_code_cell(
+"""print('=== DTYPES AND NON-NULL COUNTS ===')
 df.info()
 """))
 
-cells.append(new_code_cell("""# Value counts for all categorical / low-cardinality columns
-categorical_cols = df.select_dtypes(include=['object', 'bool', 'category']).columns
-print('=== CATEGORICAL COLUMN VALUE COUNTS ===')
-for col in categorical_cols:
+cells.append(new_code_cell(
+"""print('=== VALUE COUNTS — CATEGORICAL COLUMNS ===')
+cat_cols = df.select_dtypes(include=['object', 'bool']).columns
+for col in cat_cols:
     print(f'\\n--- {col} ---')
-    print(df[col].value_counts(dropna=False))
+    print(df[col].value_counts(dropna=False).to_string())
 """))
 
-cells.append(new_code_cell("""# Unique value counts per column — detect near-identifier columns
-print('=== UNIQUE VALUES PER COLUMN ===')
-unique_counts = df.nunique().reset_index()
-unique_counts.columns = ['Column', 'Unique Values']
-unique_counts['% of Total'] = (unique_counts['Unique Values'] / len(df) * 100).round(1)
-print(unique_counts.to_string(index=False))
+cells.append(new_code_cell(
+"""print('=== UNIQUE VALUES PER COLUMN ===')
+uq = df.nunique().reset_index()
+uq.columns = ['Column', 'Unique']
+uq['Pct'] = (uq['Unique'] / len(df) * 100).round(1)
+print(uq.to_string(index=False))
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 9 – Data Quality Analysis
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 9 · Data Quality Analysis
 
-This section documents **all identified data quality issues** before any cleaning is performed.
-Every issue is described, quantified, and a handling decision is recorded.
+Documenting all data quality issues **before** any cleaning.
 """))
 
-cells.append(new_code_cell("""# --- 9a. Redundant / Derived Columns ---
-print('=== REDUNDANT / DERIVED COLUMNS ===')
-print()
-print("'class'       = categorical duplicate of 'pclass'")
-print("'alive'       = string duplicate of 'survived'")
-print("'embark_town' = full-text duplicate of 'embarked'")
-print("'who'         = derived from 'sex' + 'age' (man/woman/child)")
-print("'adult_male'  = derived from 'sex' + 'age'")
-print()
-print('These columns carry no independent information.')
-print('Decision: DROP before analysis to avoid multicollinearity and confusion.')
+cells.append(new_code_cell(
+"""print('=== REDUNDANT / DERIVED COLUMNS ===')
+print("  'class'       — categorical duplicate of 'pclass'")
+print("  'alive'       — string duplicate of 'survived'")
+print("  'embark_town' — full-text duplicate of 'embarked'")
+print("  'who'         — derived from sex + age")
+print("  'adult_male'  — derived from sex + age")
+print('  Decision: DROP before analysis to avoid confusion and multicollinearity.')
 """))
 
-cells.append(new_code_cell("""# --- 9b. Missing Values Summary ---
-print('=== MISSING VALUES SUMMARY ===')
-missing = df.isnull().sum()
-missing_pct = (missing / len(df) * 100).round(1)
-missing_df = pd.DataFrame({
-    'Missing Count': missing,
-    'Missing %': missing_pct
-}).sort_values('Missing %', ascending=False)
-print(missing_df[missing_df['Missing Count'] > 0])
+cells.append(new_code_cell(
+"""print('=== MISSING VALUES ===')
+miss = df.isnull().sum()
+miss_pct = (miss / len(df) * 100).round(1)
+miss_df = pd.DataFrame({'Count': miss, 'Pct': miss_pct})
+miss_df = miss_df[miss_df['Count'] > 0].sort_values('Pct', ascending=False)
+print(miss_df.to_string())
 print()
-print(f'Total cells with missing data: {df.isnull().sum().sum():,}')
-print(f'Total cells: {df.size:,}')
-print(f'Overall missing rate: {df.isnull().sum().sum() / df.size * 100:.1f}%')
+total_miss = df.isnull().sum().sum()
+print(f'Total missing cells : {total_miss}  ({total_miss / df.size * 100:.1f}% of all cells)')
 """))
 
-cells.append(new_code_cell("""# --- 9c. Duplicate rows ---
-dupe_count = df.duplicated().sum()
-print(f'=== DUPLICATE ROWS ===')
-print(f'Number of exact duplicate rows: {dupe_count}')
-if dupe_count == 0:
+cells.append(new_code_cell(
+"""print('=== DUPLICATE ROWS ===')
+n_dupes = df.duplicated().sum()
+print(f'Exact duplicate rows: {n_dupes}')
+if n_dupes == 0:
     print('No exact duplicates found.')
-else:
-    print(df[df.duplicated(keep=False)])
 """))
 
-cells.append(new_code_cell("""# --- 9d. Suspicious / Anomalous Values ---
-print('=== SUSPICIOUS / ANOMALOUS VALUES ===')
+cells.append(new_code_cell(
+"""print('=== SUSPICIOUS / ANOMALOUS VALUES ===')
 print()
+age_out = df[(df['age'] < 0) | (df['age'] > 100)]
+print(f'Age outside [0, 100]: {len(age_out)}')
 
-# Age: should be 0-100
-age_anomalies = df[(df['age'] < 0) | (df['age'] > 100)]
-print(f'Age values outside [0, 100]: {len(age_anomalies)}')
+fare_neg = df[df['fare'] < 0]
+print(f'Negative fares      : {len(fare_neg)}')
 
-# Fare: should be >= 0
-fare_anomalies = df[df['fare'] < 0]
-print(f'Negative fare values: {len(fare_anomalies)}')
-
-# Fare = 0 (possibly free tickets or data errors)
 zero_fare = df[df['fare'] == 0]
-print(f'Zero fare values: {len(zero_fare)}')
+print(f'Zero fares          : {len(zero_fare)}')
 if len(zero_fare) > 0:
-    print(zero_fare[['pclass', 'sex', 'age', 'fare', 'embarked', 'survived']])
+    print()
+    print('Zero-fare passengers:')
+    print(zero_fare[['pclass', 'sex', 'age', 'fare', 'embarked', 'survived']].to_string())
 
-# SibSp and Parch: check extreme values
-print(f'\\nMax SibSp: {df["sibsp"].max()}  |  Max Parch: {df["parch"].max()}')
-print(f'Passengers with SibSp >= 5:')
-print(df[df['sibsp'] >= 5][['pclass', 'sex', 'age', 'sibsp', 'parch', 'survived']].head(10))
+print()
+print(f'Max SibSp: {df["sibsp"].max()}  |  Max Parch: {df["parch"].max()}')
+print()
+print('Passengers with SibSp >= 5:')
+print(df[df['sibsp'] >= 5][['pclass', 'sex', 'age', 'sibsp', 'parch', 'survived']].to_string())
 """))
 
-# ---------------------------------------------------------------------------
-# SECTION 10 – Missing Value Analysis (Visualization)
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+# SECTION 10 – Missing Value Analysis
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 10 · Missing Value Analysis\n"))
 
-## Section 10 · Missing Value Analysis
-"""))
+cells.append(new_code_cell(
+"""import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-cells.append(new_code_cell("""# --- Missing value heatmap ---
+miss_cols = df.isnull().sum()
+miss_cols = miss_cols[miss_cols > 0].sort_values(ascending=False)
+
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-# Bar chart of missing values
-missing_cols = df.isnull().sum()
-missing_cols = missing_cols[missing_cols > 0].sort_values(ascending=False)
-axes[0].bar(missing_cols.index, missing_cols.values / len(df) * 100,
-            color=['#e74c3c', '#e67e22', '#f1c40f'], edgecolor='white', linewidth=0.8)
-axes[0].set_title('Missing Value Percentage by Column', fontweight='bold')
+bar_colors = ['#e74c3c', '#e67e22', '#f1c40f']
+axes[0].bar(miss_cols.index, miss_cols.values / len(df) * 100,
+            color=bar_colors[:len(miss_cols)], edgecolor='white', linewidth=0.8)
+axes[0].set_title('Missing Value % by Column', fontweight='bold')
 axes[0].set_ylabel('Missing (%)')
-axes[0].set_xlabel('Column')
-for i, v in enumerate(missing_cols.values / len(df) * 100):
-    axes[0].text(i, v + 0.5, f'{v:.1f}%', ha='center', fontsize=10, fontweight='bold')
+for i, v in enumerate(miss_cols.values / len(df) * 100):
+    axes[0].text(i, v + 0.3, f'{v:.1f}%', ha='center', fontsize=10, fontweight='bold')
 
-# Heatmap of missing pattern
-missing_pattern = df[missing_cols.index].isnull()
-sns.heatmap(missing_pattern.T, cbar=False, yticklabels=True,
+miss_pattern = df[miss_cols.index].isnull()
+sns.heatmap(miss_pattern.T, cbar=False, yticklabels=True,
             xticklabels=False, cmap='YlOrRd', ax=axes[1])
-axes[1].set_title('Missing Value Pattern Across Rows', fontweight='bold')
+axes[1].set_title('Missing Value Pattern Across All Rows', fontweight='bold')
 axes[1].set_xlabel('Passenger Records (891 rows)')
-axes[1].set_ylabel('Column')
 
 plt.suptitle('Figure 5 — Missing Value Analysis', fontsize=14, fontweight='bold', y=1.02)
 plt.tight_layout()
@@ -361,212 +345,164 @@ plt.show()
 print('Saved: 05_missing_values_heatmap.png')
 """))
 
-cells.append(new_code_cell("""# Analysis of age missingness — is it random or systematic?
-print('=== IS AGE MISSINGNESS SYSTEMATIC? ===')
-print()
+cells.append(new_code_cell(
+"""# Is age missingness systematic or random (MCAR)?
 df['age_missing'] = df['age'].isnull().astype(int)
 
 print('Survival rate — age missing vs present:')
 print(df.groupby('age_missing')['survived'].agg(['mean', 'count']).rename(
-    columns={'mean': 'Survival Rate', 'count': 'Count'}))
+    columns={'mean': 'Survival Rate', 'count': 'N'}).to_string())
 print()
-
 print('Pclass distribution — age missing vs present:')
-print(df.groupby('age_missing')['pclass'].value_counts(normalize=True).unstack().round(3))
+print(df.groupby('age_missing')['pclass'].value_counts(normalize=True).unstack().round(3).to_string())
 print()
-print('Conclusion: Age is slightly more missing in 3rd class — not purely MCAR.')
-print('Missing age rows will be retained; age imputed with median by pclass+sex group.')
+print('Conclusion: Age is more missing in 3rd class — NOT purely random (MAR, not MCAR).')
+print('Implication: Global mean imputation would be biased; group-level median is preferred.')
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 11 – Duplicate Analysis
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 11 · Duplicate Analysis\n"))
 
-## Section 11 · Duplicate Analysis
-"""))
-
-cells.append(new_code_cell("""# Full duplicate check
-print('=== DUPLICATE ANALYSIS ===')
-print()
-n_exact_dupes = df.duplicated().sum()
-print(f'Exact duplicate rows: {n_exact_dupes}')
+cells.append(new_code_cell(
+"""print('=== DUPLICATE ANALYSIS ===')
+n_exact = df.duplicated().sum()
+print(f'Exact duplicate rows: {n_exact}')
 print()
 
-# Check near-duplicates on key identity columns
 key_cols = ['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked']
 n_key_dupes = df.duplicated(subset=key_cols).sum()
-print(f'Near-duplicate rows (same key fields): {n_key_dupes}')
+print(f'Near-duplicate rows (same on 7 key fields): {n_key_dupes}')
 print()
 
 if n_key_dupes > 0:
     dupes = df[df.duplicated(subset=key_cols, keep=False)].sort_values(key_cols)
-    print('Sample near-duplicates:')
-    print(dupes[key_cols + ['survived']].head(10))
+    print('Sample near-duplicates (likely family members with matching attributes):')
+    print(dupes[key_cols + ['survived']].head(10).to_string())
     print()
-    print('Note: Near-duplicates may be family members with similar attributes.')
-    print('They are NOT removed — they are legitimate passengers.')
+    print('Decision: Near-duplicates are NOT removed — they are legitimate passengers.')
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 12 – Data Cleaning
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 12 · Data Cleaning
 
-All cleaning decisions are explicitly documented below.
-No rows or columns are removed without justification.
+Every cleaning decision is documented with justification.
+No rows or columns are removed without explicit reasoning.
 """))
 
-cells.append(new_code_cell("""# ============================================================
-# CLEANING DECISION LOG
-# ============================================================
-
-# DECISION 1: Drop redundant / derived columns
-# Reason: class, alive, embark_town, who, adult_male carry no
-# independent information — they are derived from other columns.
-# Risk: None. Original columns (pclass, survived, embarked, sex, age)
-# are retained.
-# ============================================================
+cells.append(new_code_cell(
+"""# ── DECISION 1: Drop redundant / derived columns ─────────────────────────────
 cols_to_drop = ['class', 'alive', 'embark_town', 'who', 'adult_male', 'age_missing']
 df_clean = df.drop(columns=cols_to_drop)
-print(f'DECISION 1: Dropped {len(cols_to_drop)} redundant columns.')
-print(f'  Dropped: {cols_to_drop}')
-print(f'  Shape after: {df_clean.shape}')
+print('DECISION 1: Dropped 6 redundant/derived columns.')
+print('  Reason: carry no independent information — derived from retained columns.')
+print('  Shape after:', df_clean.shape)
 print()
 
-# ============================================================
-# DECISION 2: Impute missing Age with group-level median
-# Reason: ~20% missing — dropping would lose 177 rows (20% of data).
-# Random imputation would distort distributions. Group median
-# (by pclass + sex) is a reasonable, defensible imputation
-# because age distributions differ significantly by class and sex.
-# Alternative (mean imputation) is NOT used — age is right-skewed.
-# ============================================================
+# ── DECISION 2: Impute missing Age with pclass×sex group median ───────────────
 age_medians = df_clean.groupby(['pclass', 'sex'])['age'].transform('median')
 df_clean['age'] = df_clean['age'].fillna(age_medians)
-remaining_age_missing = df_clean['age'].isnull().sum()
-print(f'DECISION 2: Age imputed with pclass+sex group median.')
-print(f'  Remaining missing age values: {remaining_age_missing}')
-print()
-
-# Verify imputed medians used
-print('  Group medians used for imputation:')
+print('DECISION 2: Imputed missing Age using pclass×sex group median.')
+print('  Reason: 20% missing — dropping 177 rows loses too much data.')
+print('  Group median chosen over global mean because age is right-skewed')
+print('  and distributions differ significantly by class and sex.')
+print('  Group medians used:')
 print(df.groupby(['pclass', 'sex'])['age'].median().to_string())
+print('  Remaining missing Age:', df_clean['age'].isnull().sum())
 print()
 
-# ============================================================
-# DECISION 3: Drop rows with missing Embarked (2 rows)
-# Reason: Only 2 rows affected. Embarked is used in analysis.
-# Imputing port for 2 rows would introduce uncertainty.
-# Impact: minimal (0.22% of data).
-# ============================================================
+# ── DECISION 3: Drop 2 rows with missing Embarked ─────────────────────────────
 n_before = len(df_clean)
 df_clean = df_clean.dropna(subset=['embarked'])
-n_after = len(df_clean)
-print(f'DECISION 3: Dropped {n_before - n_after} rows with missing Embarked.')
-print(f'  Shape after: {df_clean.shape}')
+print('DECISION 3: Dropped', n_before - len(df_clean), 'rows with missing Embarked.')
+print('  Reason: Only 2 rows — negligible loss (0.22%). Imputing port for 2 rows')
+print('  would introduce arbitrary uncertainty.')
+print('  Shape after:', df_clean.shape)
 print()
 
-# ============================================================
-# DECISION 4: Drop Deck column (77% missing)
-# Reason: 688/891 values are missing. Any imputation would be
-# fabricated — the deck assignment is not inferable from
-# other variables without external data. Column is not dropped
-# entirely in case the missingness pattern itself is informative,
-# but it will NOT be used in quantitative analysis.
-# ============================================================
+# ── DECISION 4: Drop Deck column ──────────────────────────────────────────────
 df_clean = df_clean.drop(columns=['deck'])
-print(f'DECISION 4: Dropped "deck" column (77.2% missing, not analytically recoverable).')
-print(f'  Shape after: {df_clean.shape}')
+print('DECISION 4: Dropped "deck" column (77.2% missing).')
+print('  Reason: Not analytically recoverable — any imputation would be fabricated.')
+print('  Shape after:', df_clean.shape)
 print()
 
-# ============================================================
-# DECISION 5: Zero fares — retain and flag
-# Reason: Zero fares exist for a small number of passengers.
-# They likely represent crew/staff passengers or data entry issues.
-# Removing them would lose valid rows. They are flagged.
-# ============================================================
-zero_fare_count = (df_clean['fare'] == 0).sum()
-print(f'DECISION 5: Retained {zero_fare_count} passengers with fare=0 (flagged as anomalous).')
+# ── DECISION 5: Retain zero-fare passengers ───────────────────────────────────
+n_zero = (df_clean['fare'] == 0).sum()
+print('DECISION 5: Retained', n_zero, 'zero-fare passengers (flagged as anomalous).')
+print('  Reason: Likely crew/officer records. Removing them would lose valid data.')
 print()
 
-# ============================================================
-# DECISION 6: Feature Engineering — Family Size
-# Reason: SibSp and Parch individually are less interpretable
-# than total family size. Creating family_size and is_alone
-# creates analytically useful features without fabricating data.
-# ============================================================
+# ── DECISION 6: Feature engineering — family_size and is_alone ────────────────
 df_clean['family_size'] = df_clean['sibsp'] + df_clean['parch'] + 1
 df_clean['is_alone'] = (df_clean['family_size'] == 1).astype(int)
-print(f'DECISION 6: Engineered family_size = sibsp + parch + 1')
-print(f'  is_alone = 1 if family_size == 1, else 0')
-print(f'  Family size range: {df_clean["family_size"].min()} – {df_clean["family_size"].max()}')
+print('DECISION 6: Engineered family_size = sibsp + parch + 1')
+print('  is_alone = 1 if traveling solo, else 0')
+print('  Family size range:', df_clean['family_size'].min(), '–', df_clean['family_size'].max())
 print()
 
 print('=== FINAL CLEAN DATASET ===')
-print(f'Shape: {df_clean.shape}')
-print(f'Columns: {list(df_clean.columns)}')
-print(f'Missing values remaining:')
-print(df_clean.isnull().sum()[df_clean.isnull().sum() > 0])
+print('Shape:', df_clean.shape)
+print('Columns:', list(df_clean.columns))
+rem = df_clean.isnull().sum()
+rem = rem[rem > 0]
+if len(rem) == 0:
+    print('Remaining missing values: NONE')
+else:
+    print('Remaining missing values:')
+    print(rem.to_string())
 """))
 
-cells.append(new_code_cell("""# Verify cleaned data looks correct
-df_clean.head(8)
-"""))
+cells.append(new_code_cell("# Verify cleaned data looks correct\ndf_clean.head(8)\n"))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 13 – Descriptive Statistics
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 13 · Descriptive Statistics\n"))
 
-## Section 13 · Descriptive Statistics
-"""))
-
-cells.append(new_code_cell("""# Numerical columns summary
+cells.append(new_code_cell(
+"""num_cols = ['age', 'fare', 'sibsp', 'parch', 'family_size']
+desc = df_clean[num_cols].describe().T
+desc['skewness'] = df_clean[num_cols].skew().round(2)
+desc['kurtosis'] = df_clean[num_cols].kurt().round(2)
 print('=== NUMERICAL DESCRIPTIVE STATISTICS ===')
-num_cols = ['age', 'fare', 'sibsp', 'parch', 'family_size']
-desc_num = df_clean[num_cols].describe().T
-desc_num['skewness'] = df_clean[num_cols].skew().round(2)
-desc_num['kurtosis'] = df_clean[num_cols].kurt().round(2)
-print(desc_num.round(2).to_string())
+print(desc.round(2).to_string())
 """))
 
-cells.append(new_code_cell("""# Categorical columns summary
-print('=== CATEGORICAL COLUMN DISTRIBUTIONS ===')
-cat_summary_cols = ['survived', 'pclass', 'sex', 'embarked']
-for col in cat_summary_cols:
+cells.append(new_code_cell(
+"""print('=== CATEGORICAL COLUMN DISTRIBUTIONS ===')
+for col in ['survived', 'pclass', 'sex', 'embarked']:
     vc = df_clean[col].value_counts()
     pct = df_clean[col].value_counts(normalize=True) * 100
-    summary = pd.DataFrame({'Count': vc, 'Percentage': pct.round(1)})
+    summary = pd.DataFrame({'Count': vc, 'Pct (%)': pct.round(1)})
     print(f'\\n--- {col.upper()} ---')
     print(summary.to_string())
 """))
 
-cells.append(new_code_cell("""# Overall survival rate
-survival_rate = df_clean['survived'].mean() * 100
-total = len(df_clean)
-survived_n = df_clean['survived'].sum()
-died_n = total - survived_n
-
+cells.append(new_code_cell(
+"""survived_n = int(df_clean['survived'].sum())
+total_n = len(df_clean)
+died_n = total_n - survived_n
+surv_rate = survived_n / total_n * 100
 print('=== OVERALL SURVIVAL RATE ===')
-print(f'Total passengers (after cleaning): {total}')
-print(f'Survived : {survived_n} ({survival_rate:.1f}%)')
-print(f'Died     : {died_n} ({100 - survival_rate:.1f}%)')
+print(f'Total (after cleaning) : {total_n}')
+print(f'Survived               : {survived_n}  ({surv_rate:.1f}%)')
+print(f'Died                   : {died_n}  ({100 - surv_rate:.1f}%)')
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 14 – Univariate Analysis
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 14 · Univariate Analysis\n"))
 
-## Section 14 · Univariate Analysis
-
-Examining the distribution of each variable individually.
-"""))
-
-cells.append(new_code_cell("""# ---- Figure 1: Survival Rate (Overall) ----
+cells.append(new_code_cell(
+"""# Figure 1: Overall Survival
 fig, ax = plt.subplots(figsize=(6, 5))
 counts = df_clean['survived'].value_counts().sort_index()
 bars = ax.bar(['Did Not Survive', 'Survived'], counts.values,
@@ -574,7 +510,8 @@ bars = ax.bar(['Did Not Survive', 'Survived'], counts.values,
 for bar, val in zip(bars, counts.values):
     pct = val / len(df_clean) * 100
     ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 5,
-            f'{val}\\n({pct:.1f}%)', ha='center', va='bottom', fontweight='bold')
+            str(val) + '\\n(' + f'{pct:.1f}' + '%)',
+            ha='center', va='bottom', fontweight='bold')
 ax.set_title('Figure 1 — Overall Survival Distribution', fontweight='bold', pad=12)
 ax.set_ylabel('Number of Passengers')
 ax.set_ylim(0, max(counts.values) * 1.2)
@@ -585,10 +522,9 @@ plt.show()
 print('Saved: 01_survival_rate.png')
 """))
 
-cells.append(new_code_cell("""# ---- Figure 2: Passenger Class Distribution ----
+cells.append(new_code_cell(
+"""# Figure 2: Passenger Class
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-
-# Bar chart by class
 class_counts = df_clean['pclass'].value_counts().sort_index()
 class_labels = ['1st Class', '2nd Class', '3rd Class']
 colors = ['#3498db', '#9b59b6', '#e67e22']
@@ -596,18 +532,15 @@ bars = axes[0].bar(class_labels, class_counts.values, color=colors,
                     edgecolor='white', linewidth=1.2, width=0.5)
 for bar, val in zip(bars, class_counts.values):
     axes[0].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2,
-                 f'{val}\\n({val/len(df_clean)*100:.1f}%)',
+                 str(val) + '\\n(' + f'{val/len(df_clean)*100:.1f}' + '%)',
                  ha='center', va='bottom', fontweight='bold')
 axes[0].set_title('Passenger Class Distribution', fontweight='bold')
 axes[0].set_ylabel('Count')
 axes[0].grid(axis='y', alpha=0.4)
-
-# Pie chart
 axes[1].pie(class_counts.values, labels=class_labels, colors=colors,
             autopct='%1.1f%%', startangle=90,
             wedgeprops={'edgecolor': 'white', 'linewidth': 1.5})
 axes[1].set_title('Passenger Class Share', fontweight='bold')
-
 plt.suptitle('Figure 2 — Passenger Class Analysis', fontsize=13, fontweight='bold')
 plt.tight_layout()
 plt.savefig(os.path.join(VIZ_DIR, '02_passenger_class.png'))
@@ -615,13 +548,15 @@ plt.show()
 print('Saved: 02_passenger_class.png')
 """))
 
-cells.append(new_code_cell("""# ---- Figure 3: Gender Distribution ----
+cells.append(new_code_cell(
+"""# Figure 3: Gender Distribution
 fig, ax = plt.subplots(figsize=(6, 5))
 sex_counts = df_clean['sex'].value_counts()
-ax.bar(sex_counts.index.str.capitalize(), sex_counts.values,
-       color=['#3498db', '#e91e8c'], edgecolor='white', linewidth=1.2, width=0.4)
-for i, (idx, val) in enumerate(sex_counts.items()):
-    ax.text(i, val + 3, f'{val}\\n({val/len(df_clean)*100:.1f}%)',
+sex_labels = ['Female' if s == 'female' else 'Male' for s in sex_counts.index]
+ax.bar(sex_labels, sex_counts.values,
+       color=['#e91e8c', '#3498db'], edgecolor='white', linewidth=1.2, width=0.4)
+for i, val in enumerate(sex_counts.values):
+    ax.text(i, val + 3, str(val) + '\\n(' + f'{val/len(df_clean)*100:.1f}' + '%)',
             ha='center', va='bottom', fontweight='bold')
 ax.set_title('Figure 3 — Gender Distribution', fontweight='bold', pad=12)
 ax.set_ylabel('Number of Passengers')
@@ -633,25 +568,21 @@ plt.show()
 print('Saved: 03_gender_distribution.png')
 """))
 
-cells.append(new_code_cell("""# ---- Figure 4: Age Distribution ----
+cells.append(new_code_cell(
+"""# Figure 4: Age Distribution
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-# Histogram
-axes[0].hist(df_clean['age'], bins=30, color='#3498db', edgecolor='white',
-             linewidth=0.8, alpha=0.85)
-axes[0].axvline(df_clean['age'].median(), color='#e74c3c', linestyle='--',
-                linewidth=2, label=f'Median: {df_clean["age"].median():.1f}')
-axes[0].axvline(df_clean['age'].mean(), color='#2ecc71', linestyle='-.',
-                linewidth=2, label=f'Mean: {df_clean["age"].mean():.1f}')
+axes[0].hist(df_clean['age'], bins=30, color='#3498db', edgecolor='white', linewidth=0.8, alpha=0.85)
+axes[0].axvline(df_clean['age'].median(), color='#e74c3c', linestyle='--', linewidth=2,
+                label='Median: ' + f'{df_clean["age"].median():.1f}')
+axes[0].axvline(df_clean['age'].mean(), color='#2ecc71', linestyle='-.', linewidth=2,
+                label='Mean: ' + f'{df_clean["age"].mean():.1f}')
 axes[0].set_title('Age Distribution (Histogram)', fontweight='bold')
 axes[0].set_xlabel('Age (years)')
 axes[0].set_ylabel('Frequency')
 axes[0].legend()
 axes[0].grid(axis='y', alpha=0.4)
-
-# KDE by survival
-for survived, label, color in [(0, 'Did Not Survive', '#e74c3c'), (1, 'Survived', '#2ecc71')]:
-    subset = df_clean[df_clean['survived'] == survived]['age']
+for surv_val, label, color in [(0, 'Did Not Survive', '#e74c3c'), (1, 'Survived', '#2ecc71')]:
+    subset = df_clean[df_clean['survived'] == surv_val]['age']
     axes[1].hist(subset, bins=25, alpha=0.55, color=color,
                  edgecolor='white', linewidth=0.5, density=True, label=label)
     subset.plot.kde(ax=axes[1], color=color, linewidth=2.5)
@@ -660,7 +591,6 @@ axes[1].set_xlabel('Age (years)')
 axes[1].set_ylabel('Density')
 axes[1].legend()
 axes[1].grid(axis='y', alpha=0.4)
-
 plt.suptitle('Figure 4 — Age Distribution Analysis', fontsize=13, fontweight='bold')
 plt.tight_layout()
 plt.savefig(os.path.join(VIZ_DIR, '04_age_distribution.png'))
@@ -668,38 +598,31 @@ plt.show()
 print('Saved: 04_age_distribution.png')
 """))
 
-cells.append(new_code_cell("""# ---- Figure 6: Fare Distribution ----
+cells.append(new_code_cell(
+"""# Figure 6: Fare Distribution
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-# Histogram (raw)
-axes[0].hist(df_clean['fare'], bins=50, color='#9b59b6', edgecolor='white',
-             linewidth=0.8, alpha=0.85)
-axes[0].axvline(df_clean['fare'].median(), color='#e74c3c', linestyle='--',
-                linewidth=2, label=f'Median: £{df_clean["fare"].median():.2f}')
-axes[0].axvline(df_clean['fare'].mean(), color='#3498db', linestyle='-.',
-                linewidth=2, label=f'Mean: £{df_clean["fare"].mean():.2f}')
+axes[0].hist(df_clean['fare'], bins=50, color='#9b59b6', edgecolor='white', linewidth=0.8, alpha=0.85)
+axes[0].axvline(df_clean['fare'].median(), color='#e74c3c', linestyle='--', linewidth=2,
+                label='Median: £' + f'{df_clean["fare"].median():.2f}')
+axes[0].axvline(df_clean['fare'].mean(), color='#3498db', linestyle='-.', linewidth=2,
+                label='Mean: £' + f'{df_clean["fare"].mean():.2f}')
 axes[0].set_title('Fare Distribution (Raw)', fontweight='bold')
 axes[0].set_xlabel('Fare (£)')
 axes[0].set_ylabel('Frequency')
 axes[0].legend()
 axes[0].grid(axis='y', alpha=0.4)
-
-# Log-transformed
 log_fare = np.log1p(df_clean['fare'])
-axes[1].hist(log_fare, bins=40, color='#e67e22', edgecolor='white',
-             linewidth=0.8, alpha=0.85)
-axes[1].axvline(log_fare.median(), color='#e74c3c', linestyle='--',
-                linewidth=2, label=f'Median: {log_fare.median():.2f}')
+axes[1].hist(log_fare, bins=40, color='#e67e22', edgecolor='white', linewidth=0.8, alpha=0.85)
+axes[1].axvline(log_fare.median(), color='#e74c3c', linestyle='--', linewidth=2,
+                label='Median: ' + f'{log_fare.median():.2f}')
 axes[1].set_title('Fare Distribution (Log-Transformed)', fontweight='bold')
 axes[1].set_xlabel('log(1 + Fare)')
 axes[1].set_ylabel('Frequency')
 axes[1].legend()
 axes[1].grid(axis='y', alpha=0.4)
-axes[1].annotate('Log transform reveals bi-modal\\nstructure masked by extreme outliers',
-                 xy=(0.98, 0.95), xycoords='axes fraction',
-                 ha='right', va='top', fontsize=9,
+axes[1].annotate('Log transform reveals bi-modal structure\\nmasked by extreme outliers',
+                 xy=(0.98, 0.95), xycoords='axes fraction', ha='right', va='top', fontsize=9,
                  bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', alpha=0.8))
-
 plt.suptitle('Figure 6 — Fare Distribution Analysis', fontsize=13, fontweight='bold')
 plt.tight_layout()
 plt.savefig(os.path.join(VIZ_DIR, '06_fare_distribution.png'))
@@ -707,41 +630,34 @@ plt.show()
 print('Saved: 06_fare_distribution.png')
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 15 – Bivariate / Multivariate Analysis
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 15 · Bivariate / Multivariate Analysis\n"))
 
-## Section 15 · Bivariate / Multivariate Analysis
+cells.append(new_code_cell(
+"""# Survival by Class (Q1)
+surv_class = df_clean.groupby(['pclass', 'survived']).size().unstack()
+surv_class.index = ['1st Class', '2nd Class', '3rd Class']
+surv_class.columns = ['Did Not Survive', 'Survived']
+rate_class = df_clean.groupby('pclass')['survived'].mean() * 100
 
-Examining relationships between pairs and groups of variables.
-"""))
-
-cells.append(new_code_cell("""# ---- Figure: Survival by Passenger Class (Q1) ----
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-# Survival count by class
-survival_class = df_clean.groupby(['pclass', 'survived']).size().unstack()
-survival_class.index = ['1st Class', '2nd Class', '3rd Class']
-survival_class.columns = ['Did Not Survive', 'Survived']
-survival_class.plot(kind='bar', ax=axes[0], color=['#e74c3c', '#2ecc71'],
-                    edgecolor='white', linewidth=0.8, rot=0)
+surv_class.plot(kind='bar', ax=axes[0], color=['#e74c3c', '#2ecc71'],
+                edgecolor='white', linewidth=0.8, rot=0)
 axes[0].set_title('Survival Count by Passenger Class', fontweight='bold')
 axes[0].set_ylabel('Number of Passengers')
 axes[0].legend(title='Outcome')
 axes[0].grid(axis='y', alpha=0.4)
 
-# Survival rate by class
-survival_rate_class = df_clean.groupby('pclass')['survived'].mean() * 100
-colors_class = ['#3498db', '#9b59b6', '#e67e22']
-bars = axes[1].bar(['1st Class', '2nd Class', '3rd Class'],
-                    survival_rate_class.values, color=colors_class,
-                    edgecolor='white', linewidth=1.2, width=0.5)
-for bar, val in zip(bars, survival_rate_class.values):
+bars = axes[1].bar(['1st Class', '2nd Class', '3rd Class'], rate_class.values,
+                    color=['#3498db', '#9b59b6', '#e67e22'], edgecolor='white', linewidth=1.2, width=0.5)
+for bar, val in zip(bars, rate_class.values):
     axes[1].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.8,
                  f'{val:.1f}%', ha='center', va='bottom', fontweight='bold')
-axes[1].axhline(df_clean['survived'].mean() * 100, color='black', linestyle='--',
-                linewidth=1.5, label=f'Overall avg: {df_clean["survived"].mean()*100:.1f}%')
+avg = df_clean['survived'].mean() * 100
+axes[1].axhline(avg, color='black', linestyle='--', linewidth=1.5,
+                label='Overall avg: ' + f'{avg:.1f}%')
 axes[1].set_title('Survival Rate by Passenger Class', fontweight='bold')
 axes[1].set_ylabel('Survival Rate (%)')
 axes[1].set_ylim(0, 85)
@@ -754,33 +670,35 @@ plt.savefig(os.path.join(VIZ_DIR, '02_survival_by_class.png'))
 plt.show()
 print('Saved: 02_survival_by_class.png')
 print()
-print('=== SURVIVAL RATES BY CLASS ===')
-for cls, rate in zip(['1st', '2nd', '3rd'], survival_rate_class.values):
-    print(f'  {cls} Class: {rate:.1f}%')
+print('Survival rates by class:')
+for cls, rate in zip(['1st', '2nd', '3rd'], rate_class.values):
+    print('  ' + cls + ' Class:', f'{rate:.1f}%')
 """))
 
-cells.append(new_code_cell("""# ---- Figure: Survival by Gender (Q2) ----
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+cells.append(new_code_cell(
+"""# Survival by Gender (Q2)
+surv_sex = df_clean.groupby(['sex', 'survived']).size().unstack()
+surv_sex.index = ['Female', 'Male']
+surv_sex.columns = ['Did Not Survive', 'Survived']
+rate_sex = df_clean.groupby('sex')['survived'].mean() * 100
 
-# Count
-survival_sex = df_clean.groupby(['sex', 'survived']).size().unstack()
-survival_sex.index = ['Female', 'Male']
-survival_sex.columns = ['Did Not Survive', 'Survived']
-survival_sex.plot(kind='bar', ax=axes[0], color=['#e74c3c', '#2ecc71'],
-                  edgecolor='white', linewidth=0.8, rot=0)
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+surv_sex.plot(kind='bar', ax=axes[0], color=['#e74c3c', '#2ecc71'],
+              edgecolor='white', linewidth=0.8, rot=0)
 axes[0].set_title('Survival Count by Gender', fontweight='bold')
 axes[0].set_ylabel('Number of Passengers')
 axes[0].legend(title='Outcome')
 axes[0].grid(axis='y', alpha=0.4)
 
-# Rate
-survival_rate_sex = df_clean.groupby('sex')['survived'].mean() * 100
-axes[1].bar(['Female', 'Male'], survival_rate_sex.values,
+rate_vals = [rate_sex.get('female', 0), rate_sex.get('male', 0)]
+axes[1].bar(['Female', 'Male'], rate_vals,
              color=['#e91e8c', '#3498db'], edgecolor='white', linewidth=1.2, width=0.4)
-for i, (sex_label, val) in enumerate(zip(['Female', 'Male'], survival_rate_sex.values)):
-    axes[1].text(i, val + 0.8, f'{val:.1f}%', ha='center', va='bottom', fontweight='bold', fontsize=13)
-axes[1].axhline(df_clean['survived'].mean() * 100, color='black', linestyle='--',
-                linewidth=1.5, label=f'Overall avg: {df_clean["survived"].mean()*100:.1f}%')
+for i, val in enumerate(rate_vals):
+    axes[1].text(i, val + 0.8, f'{val:.1f}%', ha='center', va='bottom',
+                 fontweight='bold', fontsize=13)
+avg = df_clean['survived'].mean() * 100
+axes[1].axhline(avg, color='black', linestyle='--', linewidth=1.5,
+                label='Overall avg: ' + f'{avg:.1f}%')
 axes[1].set_title('Survival Rate by Gender', fontweight='bold')
 axes[1].set_ylabel('Survival Rate (%)')
 axes[1].set_ylim(0, 100)
@@ -793,43 +711,40 @@ plt.savefig(os.path.join(VIZ_DIR, '03_survival_by_gender.png'))
 plt.show()
 print('Saved: 03_survival_by_gender.png')
 print()
-print('=== SURVIVAL RATES BY GENDER ===')
-for sex_label, rate in zip(['Female', 'Male'], survival_rate_sex.values):
-    print(f'  {sex_label}: {rate:.1f}%')
+print('Survival rates by gender:')
+for sex_label, val in zip(['Female', 'Male'], rate_vals):
+    print('  ' + sex_label + ':', f'{val:.1f}%')
 """))
 
-cells.append(new_code_cell("""# ---- Figure: Embarkation Analysis (Q7) ----
-fig, axes = plt.subplots(1, 3, figsize=(16, 5))
-
-port_labels = {'C': 'Cherbourg', 'Q': 'Queenstown', 'S': 'Southampton'}
-df_clean['port'] = df_clean['embarked'].map(port_labels)
-
-# Passenger count by port
+cells.append(new_code_cell(
+"""# Embarkation Analysis (Q7)
+port_map = {'C': 'Cherbourg', 'Q': 'Queenstown', 'S': 'Southampton'}
+df_clean['port'] = df_clean['embarked'].map(port_map)
 port_counts = df_clean['port'].value_counts()
+surv_port = df_clean.groupby('port')['survived'].mean() * 100
+surv_port = surv_port.reindex(port_counts.index)
 colors_port = ['#3498db', '#2ecc71', '#e67e22']
+
+fig, axes = plt.subplots(1, 3, figsize=(16, 5))
 axes[0].bar(port_counts.index, port_counts.values, color=colors_port,
              edgecolor='white', linewidth=1.2, width=0.5)
 for i, val in enumerate(port_counts.values):
-    axes[0].text(i, val + 2, f'{val}', ha='center', va='bottom', fontweight='bold')
+    axes[0].text(i, val + 2, str(val), ha='center', va='bottom', fontweight='bold')
 axes[0].set_title('Passenger Count by Port', fontweight='bold')
 axes[0].set_ylabel('Count')
 axes[0].grid(axis='y', alpha=0.4)
 
-# Survival rate by port
-surv_port = df_clean.groupby('port')['survived'].mean() * 100
-surv_port = surv_port.reindex(port_counts.index)
 axes[1].bar(surv_port.index, surv_port.values, color=colors_port,
              edgecolor='white', linewidth=1.2, width=0.5)
 for i, val in enumerate(surv_port.values):
     axes[1].text(i, val + 0.5, f'{val:.1f}%', ha='center', va='bottom', fontweight='bold')
-axes[1].axhline(df_clean['survived'].mean() * 100, color='black', linestyle='--',
-                linewidth=1.5)
+avg = df_clean['survived'].mean() * 100
+axes[1].axhline(avg, color='black', linestyle='--', linewidth=1.5)
 axes[1].set_title('Survival Rate by Port', fontweight='bold')
 axes[1].set_ylabel('Survival Rate (%)')
 axes[1].set_ylim(0, 80)
 axes[1].grid(axis='y', alpha=0.4)
 
-# Class distribution by port (stacked)
 port_class = df_clean.groupby(['port', 'pclass']).size().unstack().reindex(port_counts.index)
 port_class.columns = ['1st Class', '2nd Class', '3rd Class']
 port_class_pct = port_class.div(port_class.sum(axis=1), axis=0) * 100
@@ -847,23 +762,26 @@ plt.show()
 print('Saved: 08_embarkation_analysis.png')
 """))
 
-cells.append(new_code_cell("""# ---- Figure: Family Size vs Survival (Q8) ----
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-# Survival rate by family size
+cells.append(new_code_cell(
+"""# Family Size vs Survival (Q8)
 fam_surv = df_clean.groupby('family_size')['survived'].agg(['mean', 'count'])
 fam_surv.columns = ['Survival Rate', 'Count']
 fam_surv['Survival Rate'] = fam_surv['Survival Rate'] * 100
-fam_surv = fam_surv[fam_surv['Count'] >= 5]  # only show sizes with enough data
+fam_filt = fam_surv[fam_surv['Count'] >= 5]
 
-axes[0].bar(fam_surv.index.astype(str), fam_surv['Survival Rate'].values,
-             color='#3498db', edgecolor='white', linewidth=0.8)
-for i, (idx, row) in enumerate(fam_surv.iterrows()):
+alone_surv = df_clean.groupby('is_alone')['survived'].mean() * 100
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+x_labels = [str(x) for x in fam_filt.index]
+bars = axes[0].bar(x_labels, fam_filt['Survival Rate'].values,
+                    color='#3498db', edgecolor='white', linewidth=0.8)
+for i, (idx, row) in enumerate(fam_filt.iterrows()):
     axes[0].text(i, row['Survival Rate'] + 0.8,
-                 f"{row['Survival Rate']:.0f}%\n(n={int(row['Count'])})",
+                 f'{row["Survival Rate"]:.0f}%' + '\\n(n=' + str(int(row['Count'])) + ')',
                  ha='center', va='bottom', fontsize=8.5)
-axes[0].axhline(df_clean['survived'].mean() * 100, color='#e74c3c', linestyle='--',
-                linewidth=1.5, label=f'Overall: {df_clean["survived"].mean()*100:.1f}%')
+avg = df_clean['survived'].mean() * 100
+axes[0].axhline(avg, color='#e74c3c', linestyle='--', linewidth=1.5,
+                label='Overall: ' + f'{avg:.1f}%')
 axes[0].set_title('Survival Rate by Family Size', fontweight='bold')
 axes[0].set_xlabel('Family Size (self + relatives)')
 axes[0].set_ylabel('Survival Rate (%)')
@@ -871,15 +789,14 @@ axes[0].set_ylim(0, 100)
 axes[0].legend()
 axes[0].grid(axis='y', alpha=0.4)
 
-# Alone vs not alone
-alone_surv = df_clean.groupby('is_alone')['survived'].mean() * 100
-axes[1].bar(['With Family', 'Alone'], alone_surv.values,
+alone_vals = [alone_surv.get(0, 0), alone_surv.get(1, 0)]
+axes[1].bar(['With Family', 'Alone'], alone_vals,
              color=['#2ecc71', '#e74c3c'], edgecolor='white', linewidth=1.2, width=0.4)
-for i, val in enumerate(alone_surv.values):
+for i, val in enumerate(alone_vals):
     axes[1].text(i, val + 0.8, f'{val:.1f}%', ha='center', va='bottom',
                  fontweight='bold', fontsize=13)
-axes[1].axhline(df_clean['survived'].mean() * 100, color='black', linestyle='--', linewidth=1.5)
-axes[1].set_title('Survival: Alone vs With Family', fontweight='bold')
+axes[1].axhline(avg, color='black', linestyle='--', linewidth=1.5)
+axes[1].set_title('Survival: With Family vs Alone', fontweight='bold')
 axes[1].set_ylabel('Survival Rate (%)')
 axes[1].set_ylim(0, 80)
 axes[1].grid(axis='y', alpha=0.4)
@@ -890,83 +807,76 @@ plt.savefig(os.path.join(VIZ_DIR, '09_family_size_survival.png'))
 plt.show()
 print('Saved: 09_family_size_survival.png')
 print()
-print('=== SURVIVAL BY FAMILY SIZE ===')
-print(fam_surv.to_string())
+print('Survival by family size:')
+print(fam_filt.round(1).to_string())
 """))
 
-cells.append(new_code_cell("""# ---- Figure: Gender × Class Heatmap (Q10) ----
+cells.append(new_code_cell(
+"""# Gender x Class Heatmap (Q10)
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-# Heatmap: survival rate by sex and pclass
 pivot = df_clean.pivot_table(values='survived', index='sex', columns='pclass', aggfunc='mean') * 100
 pivot.index = ['Female', 'Male']
 pivot.columns = ['1st Class', '2nd Class', '3rd Class']
-sns.heatmap(pivot, annot=True, fmt='.1f', cmap='RdYlGn',
-            linewidths=0.5, linecolor='white',
-            annot_kws={'size': 13, 'weight': 'bold'},
+sns.heatmap(pivot, annot=True, fmt='.1f', cmap='RdYlGn', center=50,
+            linewidths=0.5, linecolor='white', annot_kws={'size': 13, 'weight': 'bold'},
             cbar_kws={'label': 'Survival Rate (%)'}, ax=axes[0])
-axes[0].set_title('Survival Rate (%) by Gender × Class', fontweight='bold')
+axes[0].set_title('Survival Rate (%) by Gender x Class', fontweight='bold')
 axes[0].set_ylabel('Gender')
 
-# Count heatmap
-pivot_count = df_clean.pivot_table(values='survived', index='sex', columns='pclass', aggfunc='count')
-pivot_count.index = ['Female', 'Male']
-pivot_count.columns = ['1st Class', '2nd Class', '3rd Class']
-sns.heatmap(pivot_count, annot=True, fmt='d', cmap='Blues',
-            linewidths=0.5, linecolor='white',
-            annot_kws={'size': 13, 'weight': 'bold'},
+pivot_n = df_clean.pivot_table(values='survived', index='sex', columns='pclass', aggfunc='count')
+pivot_n.index = ['Female', 'Male']
+pivot_n.columns = ['1st Class', '2nd Class', '3rd Class']
+sns.heatmap(pivot_n, annot=True, fmt='d', cmap='Blues',
+            linewidths=0.5, linecolor='white', annot_kws={'size': 13, 'weight': 'bold'},
             cbar_kws={'label': 'Passenger Count'}, ax=axes[1])
-axes[1].set_title('Passenger Count by Gender × Class', fontweight='bold')
+axes[1].set_title('Passenger Count by Gender x Class', fontweight='bold')
 axes[1].set_ylabel('Gender')
 
-plt.suptitle('Figure 11 — Gender × Class Interaction (Q10)', fontsize=13, fontweight='bold')
+plt.suptitle('Figure 11 — Gender x Class Interaction (Q10)', fontsize=13, fontweight='bold')
 plt.tight_layout()
 plt.savefig(os.path.join(VIZ_DIR, '11_gender_class_survival.png'))
 plt.show()
 print('Saved: 11_gender_class_survival.png')
 print()
-print('=== SURVIVAL RATE (%) — GENDER × CLASS ===')
-print(pivot.to_string())
+print('Survival rate (%) — Gender x Class:')
+print(pivot.round(1).to_string())
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 16 – Trend Analysis
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 16 · Trend Analysis\n"))
 
-## Section 16 · Trend Analysis
-
-Examining survival trends across continuous and ordinal variables.
-"""))
-
-cells.append(new_code_cell("""# ---- Age × Survival Trend (binned) ----
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-# Age bins
-age_bins = [0, 12, 18, 30, 45, 60, 80]
-age_labels = ['0-12\n(Child)', '13-18\n(Teen)', '19-30\n(Young Adult)',
-              '31-45\n(Adult)', '46-60\n(Mature)', '61+\n(Senior)']
+cells.append(new_code_cell(
+"""# Age-group survival trend
+age_bins   = [0, 12, 18, 30, 45, 60, 80]
+age_labels = ['0-12 (Child)', '13-18 (Teen)', '19-30 (Young Adult)',
+              '31-45 (Adult)', '46-60 (Mature)', '61+ (Senior)']
 df_clean['age_group'] = pd.cut(df_clean['age'], bins=age_bins, labels=age_labels, right=True)
 
 age_surv = df_clean.groupby('age_group', observed=True)['survived'].agg(['mean', 'count'])
 age_surv.columns = ['Survival Rate', 'Count']
 age_surv['Survival Rate'] = age_surv['Survival Rate'] * 100
 
-bars = axes[0].bar(age_surv.index, age_surv['Survival Rate'],
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+bars = axes[0].bar(range(len(age_surv)), age_surv['Survival Rate'].values,
                     color='#3498db', edgecolor='white', linewidth=0.8, alpha=0.85)
-for bar, (idx, row) in zip(bars, age_surv.iterrows()):
-    axes[0].text(bar.get_x() + bar.get_width()/2, row['Survival Rate'] + 0.8,
-                 f"{row['Survival Rate']:.0f}%\nn={int(row['Count'])}",
-                 ha='center', va='bottom', fontsize=8.5)
-axes[0].axhline(df_clean['survived'].mean() * 100, color='#e74c3c', linestyle='--',
-                linewidth=1.5, label=f'Overall: {df_clean["survived"].mean()*100:.1f}%')
+axes[0].set_xticks(range(len(age_surv)))
+axes[0].set_xticklabels(age_surv.index, rotation=15, ha='right', fontsize=9)
+for i, (idx, row) in enumerate(age_surv.iterrows()):
+    axes[0].text(i, row['Survival Rate'] + 0.8,
+                 f'{row["Survival Rate"]:.0f}%' + ' n=' + str(int(row['Count'])),
+                 ha='center', va='bottom', fontsize=8)
+avg = df_clean['survived'].mean() * 100
+axes[0].axhline(avg, color='#e74c3c', linestyle='--', linewidth=1.5,
+                label='Overall: ' + f'{avg:.1f}%')
 axes[0].set_title('Survival Rate by Age Group', fontweight='bold')
 axes[0].set_ylabel('Survival Rate (%)')
 axes[0].set_ylim(0, 80)
 axes[0].legend()
 axes[0].grid(axis='y', alpha=0.4)
 
-# Age violin by survival
 sns.violinplot(data=df_clean, x='survived', y='age', hue='survived',
                palette={0: '#e74c3c', 1: '#2ecc71'}, inner='box',
                cut=0, ax=axes[1], legend=False)
@@ -976,37 +886,42 @@ axes[1].set_title('Age Distribution by Survival (Violin)', fontweight='bold')
 axes[1].set_ylabel('Age (years)')
 axes[1].grid(axis='y', alpha=0.4)
 
-plt.suptitle('Figure — Age–Survival Trend Analysis', fontsize=13, fontweight='bold')
+plt.suptitle('Figure — Age-Survival Trend Analysis', fontsize=13, fontweight='bold')
 plt.tight_layout()
 plt.savefig(os.path.join(VIZ_DIR, '04_age_survival_trend.png'))
 plt.show()
 print('Saved: 04_age_survival_trend.png')
 print()
-print('=== SURVIVAL RATE BY AGE GROUP ===')
-print(age_surv.to_string())
+print('Survival rate by age group:')
+print(age_surv.round(1).to_string())
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 17 – Outlier / Anomaly Analysis
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 17 · Outlier / Anomaly Analysis
 
-**Approach:** Outliers are identified using IQR method and visualized — but not automatically removed.
-Each outlier is interpreted in context.
+Outliers are identified using the IQR method and interpreted in context.
+They are **not** removed without justification.
 """))
 
-cells.append(new_code_cell("""# ---- Figure 7: Fare Boxplots (Outlier Analysis) ----
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+cells.append(new_code_cell(
+"""Q1_fare = df_clean['fare'].quantile(0.25)
+Q3_fare = df_clean['fare'].quantile(0.75)
+IQR_fare = Q3_fare - Q1_fare
+upper_fence = Q3_fare + 1.5 * IQR_fare
+outliers_fare = df_clean[df_clean['fare'] > upper_fence]
 
-# Boxplot by class
 df_clean['class_label'] = df_clean['pclass'].map({1: '1st Class', 2: '2nd Class', 3: '3rd Class'})
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 sns.boxplot(data=df_clean, x='class_label', y='fare',
             palette=['#3498db', '#9b59b6', '#e67e22'],
             flierprops={'marker': 'o', 'markerfacecolor': '#e74c3c',
-                        'markersize': 5, 'alpha': 0.6},
-            ax=axes[0])
+                        'markersize': 5, 'alpha': 0.6}, ax=axes[0])
 axes[0].set_title('Fare Distribution by Class (with Outliers)', fontweight='bold')
 axes[0].set_xlabel('Passenger Class')
 axes[0].set_ylabel('Fare (£)')
@@ -1015,20 +930,13 @@ axes[0].annotate('Red dots = outliers\\n(legitimate high-fare\\n1st class passen
                  xy=(0.02, 0.97), xycoords='axes fraction', va='top',
                  fontsize=9, bbox=dict(boxstyle='round', fc='lightyellow', alpha=0.8))
 
-# IQR-based outlier detection
-Q1 = df_clean['fare'].quantile(0.25)
-Q3 = df_clean['fare'].quantile(0.75)
-IQR = Q3 - Q1
-upper_fence = Q3 + 1.5 * IQR
-outliers_fare = df_clean[df_clean['fare'] > upper_fence]
-
-axes[1].scatter(range(len(df_clean[df_clean['fare'] <= upper_fence])),
-                df_clean[df_clean['fare'] <= upper_fence]['fare'].values,
+normal = df_clean[df_clean['fare'] <= upper_fence]
+axes[1].scatter(range(len(normal)), normal['fare'].values,
                 alpha=0.4, s=12, color='#3498db', label='Normal')
 axes[1].scatter(range(len(outliers_fare)), outliers_fare['fare'].values,
-                alpha=0.7, s=30, color='#e74c3c', label=f'Outliers (n={len(outliers_fare)})')
+                alpha=0.7, s=30, color='#e74c3c', label='Outliers (n=' + str(len(outliers_fare)) + ')')
 axes[1].axhline(upper_fence, color='#e74c3c', linestyle='--', linewidth=1.5,
-                label=f'Upper fence: £{upper_fence:.1f}')
+                label='Upper fence: £' + f'{upper_fence:.1f}')
 axes[1].set_title('Fare Outlier Detection (IQR Method)', fontweight='bold')
 axes[1].set_xlabel('Passenger Index')
 axes[1].set_ylabel('Fare (£)')
@@ -1041,58 +949,48 @@ plt.savefig(os.path.join(VIZ_DIR, '07_fare_boxplot_outliers.png'))
 plt.show()
 print('Saved: 07_fare_boxplot_outliers.png')
 print()
-print(f'=== FARE OUTLIER SUMMARY ===')
-print(f'Q1: £{Q1:.2f}  |  Q3: £{Q3:.2f}  |  IQR: £{IQR:.2f}')
-print(f'Upper fence (Q3 + 1.5×IQR): £{upper_fence:.2f}')
-print(f'Outlier count: {len(outliers_fare)} ({len(outliers_fare)/len(df_clean)*100:.1f}%)')
-print(f'Max fare in dataset: £{df_clean["fare"].max():.2f}')
+print('Fare outlier summary:')
+print('  Q1: £' + f'{Q1_fare:.2f}' + '  Q3: £' + f'{Q3_fare:.2f}' + '  IQR: £' + f'{IQR_fare:.2f}')
+print('  Upper fence (Q3 + 1.5*IQR): £' + f'{upper_fence:.2f}')
+print('  Outlier count:', len(outliers_fare), '(' + f'{len(outliers_fare)/len(df_clean)*100:.1f}' + '%)')
+print('  Max fare: £' + f'{df_clean["fare"].max():.2f}')
 print()
 print('Top 5 highest fares:')
-print(df_clean.nlargest(5, 'fare')[['pclass', 'sex', 'age', 'fare', 'embarked', 'survived']])
+print(df_clean.nlargest(5, 'fare')[['pclass', 'sex', 'age', 'fare', 'embarked', 'survived']].to_string())
 print()
-print('Interpretation: These are not errors. They are first-class passengers who paid')
-print('premium fares for luxury cabins. Outliers are retained in the analysis.')
+print('Interpretation: These are NOT errors. They are first-class passengers in premium cabins.')
+print('Outliers are RETAINED — contextually valid data points.')
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 18 – Correlation Analysis
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell("---\n\n## Section 18 · Correlation Analysis\n"))
 
-## Section 18 · Correlation Analysis
-
-Examining relationships among numerical variables and their association with survival.
-"""))
-
-cells.append(new_code_cell("""# ---- Figure 10: Correlation Heatmap ----
-num_cols_corr = ['survived', 'pclass', 'age', 'sibsp', 'parch', 'fare', 'family_size', 'is_alone']
+cells.append(new_code_cell(
+"""num_cols_corr = ['survived', 'pclass', 'age', 'sibsp', 'parch', 'fare', 'family_size', 'is_alone']
 corr_matrix = df_clean[num_cols_corr].corr()
 
 fig, ax = plt.subplots(figsize=(10, 8))
-mask = np.triu(np.ones_like(corr_matrix, dtype=bool))  # show lower triangle only
+mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
 sns.heatmap(corr_matrix, annot=True, fmt='.2f', cmap='coolwarm',
-            center=0, mask=mask,
-            linewidths=0.5, linecolor='white',
-            annot_kws={'size': 10},
-            cbar_kws={'label': 'Pearson r', 'shrink': 0.8},
-            ax=ax)
+            center=0, mask=mask, linewidths=0.5, linecolor='white',
+            annot_kws={'size': 10}, cbar_kws={'label': 'Pearson r', 'shrink': 0.8}, ax=ax)
 ax.set_title('Figure 10 — Correlation Matrix (Numerical Variables)', fontweight='bold', pad=15)
 plt.tight_layout()
 plt.savefig(os.path.join(VIZ_DIR, '10_correlation_heatmap.png'))
 plt.show()
 print('Saved: 10_correlation_heatmap.png')
 print()
-print('=== KEY CORRELATIONS WITH SURVIVAL ===')
+print('Key correlations with Survival:')
 surv_corr = corr_matrix['survived'].drop('survived').sort_values(key=abs, ascending=False)
 for col, val in surv_corr.items():
     direction = 'positive' if val > 0 else 'negative'
-    print(f'  {col:15s}: r = {val:+.3f}  ({direction})')
+    print('  ' + col.ljust(15) + ': r = ' + f'{val:+.3f}' + '  (' + direction + ')')
 """))
 
-cells.append(new_code_cell("""# Pairplot for key variables
-fig = plt.figure(figsize=(1, 1))  # dummy — pairplot creates its own figure
-plt.close(fig)
-
+cells.append(new_code_cell(
+"""# Pairplot — key numerical variables coloured by survival
 g = sns.pairplot(
     df_clean[['survived', 'age', 'fare', 'pclass', 'family_size']].assign(
         survived=df_clean['survived'].map({0: 'Died', 1: 'Survived'})
@@ -1103,178 +1001,191 @@ g = sns.pairplot(
     diag_kind='kde',
     corner=True
 )
-g.figure.suptitle('Pairplot — Key Numerical Variables by Survival', y=1.02, fontweight='bold')
+g.figure.suptitle('Figure 10b — Pairplot of Key Numerical Variables by Survival',
+                  y=1.02, fontweight='bold')
 g.figure.savefig(os.path.join(VIZ_DIR, '10b_pairplot.png'), bbox_inches='tight', dpi=120)
 plt.show()
 print('Saved: 10b_pairplot.png')
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 19 – Hypothesis Testing
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 19 · Hypothesis Testing
 
-All tests are performed at **α = 0.05** significance level.
-Each test is introduced with a clearly stated null hypothesis, then interpreted.
+All tests at **α = 0.05** significance level.
+Each test states H₀, H₁, the method used, the statistic, p-value, and interpretation.
 """))
 
-cells.append(new_code_cell("""print('=' * 65)
+cells.append(new_code_cell(
+"""# ── TEST 1: Gender and Survival (Chi-Square) ─────────────────────────────────
+print('=' * 65)
 print('HYPOTHESIS TEST 1 — Gender and Survival (Chi-Square Test)')
 print('=' * 65)
 print()
-print('H₀: There is no significant association between gender and survival.')
-print('H₁: There IS a significant association between gender and survival.')
+print('H0: There is no significant association between gender and survival.')
+print('H1: There IS a significant association between gender and survival.')
 print()
 
 contingency_sex = pd.crosstab(df_clean['sex'], df_clean['survived'])
 print('Contingency Table:')
-print(contingency_sex.rename(columns={0: 'Died', 1: 'Survived'}))
+print(contingency_sex.rename(columns={0: 'Died', 1: 'Survived'}).to_string())
 print()
 
-chi2, p_val, dof, expected = chi2_contingency(contingency_sex)
-print(f'Chi-Square Statistic : {chi2:.4f}')
-print(f'P-Value              : {p_val:.2e}')
-print(f'Degrees of Freedom   : {dof}')
+chi2_val, p_val, dof_val, expected = chi2_contingency(contingency_sex)
+print('Chi-Square Statistic :', round(chi2_val, 4))
+print('P-Value              :', '{:.2e}'.format(p_val))
+print('Degrees of Freedom   :', dof_val)
 print()
 if p_val < 0.05:
-    print(f'Result: REJECT H₀  (p={p_val:.2e} < α=0.05)')
-    print('Conclusion: Gender is significantly associated with survival.')
-    female_surv = df_clean[df_clean['sex']=='female']['survived'].mean()*100
-    male_surv = df_clean[df_clean['sex']=='male']['survived'].mean()*100
-    print(f'  Female survival rate: {female_surv:.1f}%')
-    print(f'  Male survival rate  : {male_surv:.1f}%')
-    print(f'  "Women and children first" policy is statistically confirmed.')
+    print('Result: REJECT H0  (p = ' + '{:.2e}'.format(p_val) + ' < alpha = 0.05)')
+    f_rate = df_clean[df_clean['sex'] == 'female']['survived'].mean() * 100
+    m_rate = df_clean[df_clean['sex'] == 'male']['survived'].mean()   * 100
+    print('Conclusion: Gender is SIGNIFICANTLY associated with survival.')
+    print('  Female survival rate : ' + f'{f_rate:.1f}%')
+    print('  Male survival rate   : ' + f'{m_rate:.1f}%')
+    print('  The "women and children first" protocol is statistically confirmed.')
 else:
-    print(f'Result: FAIL TO REJECT H₀  (p={p_val:.2e} >= α=0.05)')
+    print('Result: FAIL TO REJECT H0')
 """))
 
-cells.append(new_code_cell("""print('=' * 65)
+cells.append(new_code_cell(
+"""# ── TEST 2: Passenger Class and Survival (Chi-Square) ────────────────────────
+print('=' * 65)
 print('HYPOTHESIS TEST 2 — Passenger Class and Survival (Chi-Square)')
 print('=' * 65)
 print()
-print('H₀: Passenger class has no significant association with survival.')
-print('H₁: Passenger class IS significantly associated with survival.')
+print('H0: Passenger class has no significant association with survival.')
+print('H1: Passenger class IS significantly associated with survival.')
 print()
 
 contingency_class = pd.crosstab(df_clean['pclass'], df_clean['survived'])
 print('Contingency Table:')
-print(contingency_class.rename(columns={0: 'Died', 1: 'Survived'}))
+print(contingency_class.rename(columns={0: 'Died', 1: 'Survived'}).to_string())
 print()
 
 chi2_c, p_c, dof_c, _ = chi2_contingency(contingency_class)
-print(f'Chi-Square Statistic : {chi2_c:.4f}')
-print(f'P-Value              : {p_c:.2e}')
-print(f'Degrees of Freedom   : {dof_c}')
+print('Chi-Square Statistic :', round(chi2_c, 4))
+print('P-Value              :', '{:.2e}'.format(p_c))
+print('Degrees of Freedom   :', dof_c)
 print()
 if p_c < 0.05:
-    print(f'Result: REJECT H₀  (p={p_c:.2e} < α=0.05)')
-    print('Conclusion: Passenger class is significantly associated with survival.')
+    print('Result: REJECT H0  (p = ' + '{:.2e}'.format(p_c) + ' < alpha = 0.05)')
+    print('Conclusion: Passenger class is SIGNIFICANTLY associated with survival.')
     for cls in [1, 2, 3]:
-        r = df_clean[df_clean['pclass']==cls]['survived'].mean()*100
-        print(f'  Class {cls}: {r:.1f}% survival rate')
+        r = df_clean[df_clean['pclass'] == cls]['survived'].mean() * 100
+        print('  Class ' + str(cls) + ': ' + f'{r:.1f}%' + ' survival rate')
 else:
-    print(f'Result: FAIL TO REJECT H₀')
+    print('Result: FAIL TO REJECT H0')
 """))
 
-cells.append(new_code_cell("""print('=' * 65)
+cells.append(new_code_cell(
+"""# ── TEST 3: Fare vs Survival (Mann-Whitney U) ────────────────────────────────
+print('=' * 65)
 print('HYPOTHESIS TEST 3 — Fare vs Survival (Mann-Whitney U Test)')
 print('=' * 65)
 print()
-print('H₀: The fare distributions of survivors and non-survivors are identical.')
-print('H₁: Survivors paid significantly higher fares than non-survivors.')
+print('H0: Fare distributions of survivors and non-survivors are identical.')
+print('H1: Survivors paid significantly higher fares than non-survivors.')
 print()
-print('Note: Mann-Whitney U is used instead of t-test because fare is')
-print('highly right-skewed (non-normal). This is a one-sided test.')
+print('Note: Mann-Whitney U chosen over t-test because fare is highly right-skewed.')
+print('This is a one-sided test (alternative = greater).')
 print()
 
 fares_survived = df_clean[df_clean['survived'] == 1]['fare']
-fares_died = df_clean[df_clean['survived'] == 0]['fare']
+fares_died     = df_clean[df_clean['survived'] == 0]['fare']
 
-print(f'Median fare — Survived    : £{fares_survived.median():.2f}')
-print(f'Median fare — Did Not Survive: £{fares_died.median():.2f}')
+print('Median fare — Survived    : £' + f'{fares_survived.median():.2f}')
+print('Median fare — Did Not Survive: £' + f'{fares_died.median():.2f}')
 print()
 
 u_stat, p_mw = mannwhitneyu(fares_survived, fares_died, alternative='greater')
-print(f'Mann-Whitney U Statistic : {u_stat:.0f}')
-print(f'P-Value (one-sided)      : {p_mw:.2e}')
+print('Mann-Whitney U Statistic :', round(u_stat, 0))
+print('P-Value (one-sided)      :', '{:.2e}'.format(p_mw))
 print()
 if p_mw < 0.05:
-    print(f'Result: REJECT H₀  (p={p_mw:.2e} < α=0.05)')
-    print('Conclusion: Survivors paid significantly higher fares.')
-    print('Interpretation: Higher fares correlate with first-class cabins, which')
-    print('were closer to lifeboats — a structural advantage.')
+    print('Result: REJECT H0  (p = ' + '{:.2e}'.format(p_mw) + ' < alpha = 0.05)')
+    print('Conclusion: Survivors paid SIGNIFICANTLY higher fares.')
+    print('Interpretation: Higher fares correlate with 1st-class cabins closer to lifeboats.')
 else:
-    print(f'Result: FAIL TO REJECT H₀')
+    print('Result: FAIL TO REJECT H0')
 """))
 
-cells.append(new_code_cell("""print('=' * 65)
-print('HYPOTHESIS TEST 4 — Fare-Survival Correlation (Point-Biserial)')
+cells.append(new_code_cell(
+"""# ── TEST 4: Fare-Survival Correlation (Point-Biserial) ───────────────────────
+print('=' * 65)
+print('HYPOTHESIS TEST 4 — Fare-Survival Correlation (Point-Biserial r)')
 print('=' * 65)
 print()
-print('H₀: There is no linear correlation between fare and survival probability.')
-print('H₁: There is a significant positive correlation.')
+print('H0: There is no linear correlation between fare and survival probability.')
+print('H1: There is a significant positive correlation between fare and survival.')
 print()
 
 corr_pb, p_pb = pointbiserialr(df_clean['survived'], df_clean['fare'])
-print(f'Point-Biserial r : {corr_pb:.4f}')
-print(f'P-Value          : {p_pb:.2e}')
+print('Point-Biserial r :', round(corr_pb, 4))
+print('P-Value          :', '{:.2e}'.format(p_pb))
 print()
 if p_pb < 0.05:
-    print(f'Result: REJECT H₀  (p={p_pb:.2e} < α=0.05)')
     strength = 'weak' if abs(corr_pb) < 0.3 else ('moderate' if abs(corr_pb) < 0.5 else 'strong')
-    print(f'Conclusion: Statistically significant {strength} positive correlation (r={corr_pb:.3f})')
-    print('Note: Correlation is moderate — fare is a proxy for class, not survival itself.')
+    print('Result: REJECT H0  (p = ' + '{:.2e}'.format(p_pb) + ' < alpha = 0.05)')
+    print('Conclusion: Statistically significant ' + strength + ' positive correlation.')
+    print('Note: Fare is a PROXY for passenger class, not an independent cause of survival.')
+else:
+    print('Result: FAIL TO REJECT H0')
 """))
 
-cells.append(new_code_cell("""print('=' * 65)
-print('HYPOTHESIS TEST 5 — Age Normality (Shapiro-Wilk)')
+cells.append(new_code_cell(
+"""# ── TEST 5: Age Normality (Shapiro-Wilk) ─────────────────────────────────────
+print('=' * 65)
+print('HYPOTHESIS TEST 5 — Age Normality (Shapiro-Wilk Test)')
 print('=' * 65)
 print()
-print('H₀: Age is normally distributed.')
-print('H₁: Age is NOT normally distributed.')
-print('Note: Shapiro-Wilk applied on random sample of 200 (full dataset exceeds N=5000 limit).')
+print('H0: Age is normally distributed.')
+print('H1: Age is NOT normally distributed.')
+print('Note: Shapiro-Wilk applied on a random sample of 200 rows.')
+print('      (Full dataset N > 5000 exceeds the recommended limit for this test.)')
 print()
 
 age_sample = df_clean['age'].dropna().sample(200, random_state=42)
 stat_sw, p_sw = shapiro(age_sample)
-print(f'Shapiro-Wilk W  : {stat_sw:.4f}')
-print(f'P-Value         : {p_sw:.4f}')
+print('Shapiro-Wilk W :', round(stat_sw, 4))
+print('P-Value        :', f'{p_sw:.4f}')
 print()
 if p_sw < 0.05:
-    print(f'Result: REJECT H₀  (p={p_sw:.4f} < α=0.05)')
-    print('Conclusion: Age is NOT normally distributed — right-skewed with children at lower end.')
-    print('Implication: Non-parametric tests preferred when comparing age across groups.')
+    print('Result: REJECT H0  (p = ' + f'{p_sw:.4f}' + ' < alpha = 0.05)')
+    print('Conclusion: Age is NOT normally distributed (right-skewed, children at lower end).')
+    print('Implication: Non-parametric tests are preferred for group age comparisons.')
 else:
-    print(f'Result: FAIL TO REJECT H₀ — age approximately normal in this sample.')
+    print('Result: FAIL TO REJECT H0 — age approximately normal in this sample.')
 """))
 
-cells.append(new_code_cell("""# ---- Figure 12: Hypothesis Test Summary ----
+cells.append(new_code_cell(
+"""# Figure 12: Hypothesis Test Summary Visualization
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-# Visual: fare by survival
 sns.boxplot(data=df_clean, x='survived', y='fare', hue='survived',
             palette={0: '#e74c3c', 1: '#2ecc71'}, legend=False,
             flierprops={'marker': 'o', 'markersize': 3, 'alpha': 0.5}, ax=axes[0])
 axes[0].set_xticks([0, 1])
 axes[0].set_xticklabels(['Did Not Survive', 'Survived'])
-axes[0].set_title('Fare by Survival (Test 3 — Mann-Whitney U)', fontweight='bold')
+axes[0].set_title('Fare by Survival (Test 3 - Mann-Whitney U)', fontweight='bold')
 axes[0].set_ylabel('Fare (£)')
-axes[0].annotate(f'p < 0.001\nReject H₀', xy=(0.97, 0.97), xycoords='axes fraction',
+axes[0].annotate('p < 0.001  Reject H0', xy=(0.97, 0.97), xycoords='axes fraction',
                   ha='right', va='top', fontsize=10, fontweight='bold',
                   bbox=dict(boxstyle='round', facecolor='#d5f5e3', alpha=0.9))
 axes[0].grid(axis='y', alpha=0.4)
 
-# Visual: survival rate by sex and class combined
-pivot_sexclass = df_clean.pivot_table(values='survived', index='sex', columns='pclass', aggfunc='mean') * 100
-pivot_sexclass.index = ['Female', 'Male']
-pivot_sexclass.columns = ['1st', '2nd', '3rd']
-pivot_sexclass.T.plot(kind='bar', ax=axes[1], color=['#e91e8c', '#3498db'],
-                       edgecolor='white', linewidth=0.8, rot=0)
-axes[1].axhline(df_clean['survived'].mean() * 100, color='black', linestyle='--',
-                linewidth=1.5, label='Overall avg')
-axes[1].set_title('Survival % — Gender × Class (Tests 1 & 2)', fontweight='bold')
+pivot_sc = df_clean.pivot_table(values='survived', index='sex', columns='pclass', aggfunc='mean') * 100
+pivot_sc.index = ['Female', 'Male']
+pivot_sc.columns = ['1st', '2nd', '3rd']
+pivot_sc.T.plot(kind='bar', ax=axes[1], color=['#e91e8c', '#3498db'],
+                 edgecolor='white', linewidth=0.8, rot=0)
+avg = df_clean['survived'].mean() * 100
+axes[1].axhline(avg, color='black', linestyle='--', linewidth=1.5, label='Overall avg')
+axes[1].set_title('Survival % by Gender x Class (Tests 1 & 2)', fontweight='bold')
 axes[1].set_ylabel('Survival Rate (%)')
 axes[1].set_xlabel('Passenger Class')
 axes[1].legend(title='Gender')
@@ -1287,167 +1198,178 @@ plt.show()
 print('Saved: 12_hypothesis_test_summary.png')
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 20 – Key Findings
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 20 · Key Findings
 
-The following findings are derived directly from the data analysis performed above.
+All findings are derived from actual data — no fabricated values.
 
 ---
 
 ### F1 — Overall Survival Rate
-- Only **38.4%** of passengers survived. The majority (61.6%) perished.
-- This reflects the chaotic and inadequate emergency response.
+- Only **38.2%** of passengers survived (340 of 889 post-cleaning).
 
-### F2 — Class Was a Matter of Life and Death
-- **1st class: ~63% survival**
-- **2nd class: ~47% survival**
-- **3rd class: ~24% survival**
-- Chi-square test confirms this difference is **statistically significant (p < 0.001)**.
-- 3rd class passengers were physically located in lower decks, farther from lifeboats.
+### F2 — Class Strongly Predicts Survival (Q1)
+- **1st class: 62.6%** survival
+- **2nd class: 47.3%** survival
+- **3rd class: 24.2%** survival
+- Chi-square: χ² = 100.98, p = 1.18×10⁻²² — **highly significant**
 
-### F3 — Gender Was the Strongest Predictor
-- **Females: ~74% survival** vs **Males: ~19% survival**
-- Chi-square test confirms this is **highly significant (p < 0.001)**.
-- The "women and children first" evacuation protocol is statistically confirmed.
+### F3 — Gender is the Strongest Predictor (Q2)
+- **Female: 74.0%** survival vs **Male: 18.9%**
+- Chi-square: χ² = 258.43, p = 3.78×10⁻⁵⁸ — **extremely significant**
+- "Women and children first" policy statistically confirmed.
 
-### F4 — Fare Correlates with Survival
-- Survivors paid significantly higher median fares (Mann-Whitney U, p < 0.001).
-- Point-biserial correlation: r ≈ +0.26 — moderate positive relationship.
-- Fare is a **proxy for class**, not an independent cause of survival.
+### F4 — Fare Correlates with Survival (Q6)
+- Median fare: survivors £26.00 vs non-survivors £10.50
+- Mann-Whitney U: p = 5.96×10⁻²² — **significant**
+- Point-biserial r = 0.255 (moderate) — fare is a proxy for class.
 
-### F5 — Cherbourg Passengers Had Higher Survival
-- Cherbourg departure had the highest survival rate (~55%) vs Southampton (~34%).
-- This is explained by Cherbourg boarding disproportionately 1st class passengers.
+### F5 — Cherbourg Had Highest Survival Rate (Q7)
+- Cherbourg: ~55% — driven by high proportion of 1st-class boarders.
+- Southampton: ~34% — largest group, predominantly 3rd class.
 
-### F6 — Children Had Elevated Survival
-- Age group 0–12 showed survival rates above the overall average.
-- Adults (31–60) had the lowest survival rates by age group.
+### F6 — Children Had Above-Average Survival (Q3)
+- Age 0–12: 58% survival — highest of any age group.
+- Seniors (61+): 19% — lowest of any age group.
 
-### F7 — Small Families Survived Best
-- Passengers with family size 2–4 had higher survival rates than solo travelers.
-- Very large families (7+) had extremely poor survival — likely lower-class families.
+### F7 — Small Families Survived Best (Q8)
+- Family size 2–4: 55–72% survival rate.
+- Solo travelers: only 30%.
+- Very large families (7+): 0–13% — lower-class families overwhelmed.
 
-### F8 — Intersection Reveals Hidden Disparity
-- 3rd class females survived at only ~50% — far below 1st class females (~97%).
-- 1st class males survived at ~37% — higher than 3rd class females alone.
-- Class and gender together are far more predictive than either variable alone.
+### F8 — Gender × Class Reveals Hidden Disparity (Q10)
+- 1st class female: **96.7%** | 3rd class female: **50.0%**
+- 1st class male: **36.9%** | 3rd class male: **13.5%**
+- Class and gender together are far more predictive than either alone.
 
-### F9 — Data Quality: Deck Column is Analytically Unusable
-- 77.2% of Deck values are missing — no meaningful deck-level analysis is possible.
-- This is the most significant data quality issue in the dataset.
+### F9 — Deck Column Analytically Unusable (Q4)
+- 77.2% missing — no deck-level analysis possible.
 
-### F10 — Age Distribution is Not Normal
-- Shapiro-Wilk confirms age is non-normal (right-skewed, p < 0.05).
-- Non-parametric tests are appropriate when comparing age across groups.
+### F10 — Age is Not Normally Distributed (Q3)
+- Shapiro-Wilk W = 0.9573, p < 0.0001 — non-normal distribution confirmed.
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 21 – Business / Practical Insights
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 21 · Business / Practical Insights
 
-These insights translate the analytical findings into actionable recommendations for emergency preparedness, policy design, and data quality practice.
-
 ---
 
-**Insight 1 — Equitable Evacuation Protocols**  
-The stark class-based survival gap (24% 3rd class vs 63% 1st class) reflects physical barriers — 3rd class passengers were deck-separated from lifeboats. Modern emergency planning in vessels must ensure equal lifeboat access regardless of accommodation class.
+**Insight 1 — Equitable Evacuation Protocols**
+The class-based survival gap (24% vs 63%) reflects physical barriers — 3rd class passengers
+were deck-separated from lifeboats. Modern vessels must ensure equal emergency access
+regardless of accommodation class.
 
-**Insight 2 — Demographic-Aware Emergency Response**  
-The gender gap confirms that explicit demographic prioritization (women and children first) was applied. Modern emergency plans should explicitly define prioritization rules to avoid ad-hoc decision-making under panic conditions.
+**Insight 2 — Demographic-Aware Emergency Planning**
+The gender gap confirms demographic prioritization was applied in real-time under panic
+conditions. Emergency protocols benefit from pre-defined, explicit prioritization rules.
 
-**Insight 3 — Family Structure Matters in Evacuation**  
-Passengers with small family groups (2–4) survived at higher rates, likely because they could assist each other without overwhelming coordination. Emergency preparedness should account for group dynamics.
+**Insight 3 — Group Size in Evacuations**
+Small families (2–4) survived best, likely due to mutual assistance without coordination
+overload. Emergency planning should account for group dynamics.
 
-**Insight 4 — Proxy Variables Can Mislead**  
-Fare appears to correlate with survival (r=+0.26) but it is a proxy for passenger class, not an independent cause. This is a classic data analytics warning: correlation without causal understanding leads to misleading conclusions.
+**Insight 4 — Proxy Variables Can Mislead**
+Fare correlates with survival (r = 0.255) but it is a proxy for class, not a cause.
+This is a core data analytics lesson: correlation without causal understanding leads
+to wrong conclusions.
 
-**Insight 5 — Data Quality Investment is Critical**  
-The Deck column (77% missing) renders an entire dimension of potential analysis impossible. In real operational contexts, data collection gaps in critical variables (cabin location, emergency response time) can undermine post-incident analysis entirely.
+**Insight 5 — Data Quality Investment**
+The Deck column (77% missing) renders a full dimension of potential analysis impossible.
+Data collection gaps in critical variables (location, response time) can undermine
+post-incident investigation entirely.
 
-**Insight 6 — Intersection of Variables Reveals Hidden Inequity**  
-Single-variable analysis masks important disparities. A 3rd class female had 50% survival — much worse than any 1st class passenger. Intersectional analysis (gender × class) is essential for fair impact assessment.
+**Insight 6 — Intersectional Analysis is Essential**
+A 3rd class female had 50% survival — far worse than any 1st class passenger.
+Single-variable analysis conceals structural inequity. Intersectional analysis
+is required for accurate and fair impact assessment.
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 22 – Limitations
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 22 · Limitations
 
-An honest EDA must document what it cannot determine.
-
 ---
 
-**L1 — Age Imputation Introduces Uncertainty**  
-The 20% missing age values were imputed using group-level medians (by pclass + sex). While this is more defensible than mean imputation, imputed values are estimates — any age-specific analysis carries this uncertainty. Sensitivity analysis with and without imputed rows was not performed.
+**L1 — Age Imputation Uncertainty**
+The 20% missing Age was imputed using group medians (pclass × sex). Imputed values are
+estimates — any age-specific finding carries this caveat.
 
-**L2 — Deck Column Was Dropped**  
-The 77.2% missing Deck variable precluded any analysis of cabin location's effect on survival — this was likely a significant physical factor (proximity to lifeboats). This limitation cannot be resolved from available data.
+**L2 — Deck Column Dropped**
+The 77.2% missing Deck variable prevents cabin-proximity-to-lifeboat analysis, which
+was likely a meaningful factor.
 
-**L3 — Dataset Covers Only One Ship**  
-Findings are specific to the Titanic under its specific conditions (night sinking, iceberg, 1912-era procedures). Generalizing survival patterns to other maritime disasters requires additional datasets.
+**L3 — Single-Disaster Dataset**
+Findings are specific to the Titanic under 1912 conditions. Generalization to other
+maritime disasters requires additional data.
 
-**L4 — No Crew Data**  
-The dataset covers passengers only. Crew survival rates were different and the crew carried out the evacuation — their exclusion means the dataset represents only one part of the event.
+**L4 — No Crew Data**
+Only passengers are included. Crew survival patterns differ and are not analysed here.
 
-**L5 — Survivor Bias in Reporting**  
-Passenger details were reconstructed from manifests, survivor testimonies, and records. Some passenger records (particularly 3rd class) may be incomplete or inaccurate.
+**L5 — Correlation ≠ Causation**
+All associations identified are correlational. Physical and behavioral mechanisms
+require domain knowledge beyond the dataset.
 
-**L6 — Correlation ≠ Causation**  
-All statistical associations identified (gender–survival, class–survival, fare–survival) are correlational. The actual causal mechanisms (physical deck location, evacuation protocol, social behavior) require domain knowledge beyond the dataset.
-
-**L7 — Seaborn's Dataset vs Original Kaggle Dataset**  
-Seaborn's built-in Titanic dataset includes 15 variables and 891 rows. The original Kaggle dataset separates train/test sets. The seaborn version adds derived columns (who, alive, deck) that are dropped during cleaning.
+**L6 — Survivor Bias in Records**
+Passenger details (especially 3rd class) were reconstructed from manifests and
+testimonies. Some records may be incomplete or inaccurate.
 """))
 
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
 # SECTION 23 – Conclusion
-# ---------------------------------------------------------------------------
-cells.append(new_markdown_cell("""---
+# ─────────────────────────────────────────────────────────────
+cells.append(new_markdown_cell(
+"""---
 
 ## Section 23 · Conclusion
 
-This Exploratory Data Analysis of the Titanic passenger dataset systematically addressed all 10 pre-defined analytical questions using statistical analysis and visualization.
+This Exploratory Data Analysis systematically addressed all 10 pre-defined analytical
+questions through data cleaning, visualization, and statistical testing.
 
-**Summary of what was accomplished:**
+**Summary:**
 
-✅ **Data Quality:** Three key issues documented — 20% missing Age (imputed), 77% missing Deck (dropped), 2 missing Embarked rows (dropped). Zero fares flagged and retained.
+✅ **Data Quality:** Three major issues documented — 20% missing Age (imputed),
+77% missing Deck (dropped), 2 missing Embarked rows (dropped). Zero fares flagged and retained.
 
-✅ **Structural Exploration:** 891 passengers × 15 variables analyzed; 5 redundant/derived columns removed; family_size and is_alone features engineered.
+✅ **Structure:** 891 × 15 raw dataset → 889 × 11 cleaned dataset.
+5 redundant columns removed. 2 features engineered.
 
-✅ **Univariate Analysis:** Distributions characterized for age, fare, family size, class, gender, and embarkation port.
+✅ **Univariate Analysis:** Distributions characterised for age, fare, class,
+gender, family size, and embarkation.
 
-✅ **Bivariate / Multivariate Analysis:** Survival quantified across all major groupings; gender × class interaction revealed the strongest intersectional pattern.
+✅ **Bivariate / Multivariate Analysis:** Survival quantified across all key groupings.
+Gender × class intersection reveals the deepest structural pattern.
 
-✅ **Hypothesis Testing:** 5 formal statistical tests conducted:
-  - Gender–survival association confirmed (Chi-square, p < 0.001)
-  - Class–survival association confirmed (Chi-square, p < 0.001)
-  - Fare–survival difference confirmed (Mann-Whitney U, p < 0.001)
-  - Fare–survival correlation confirmed (Point-biserial, p < 0.001)
-  - Age non-normality confirmed (Shapiro-Wilk, p < 0.05)
+✅ **Hypothesis Testing:** 5 formal statistical tests conducted — all key hypotheses
+confirmed at p < 0.001 significance.
 
-**Central Finding:**  
-Survival on the Titanic was not random. It was systematically determined by gender (strongest predictor), passenger class (structural physical access to lifeboats), and the interaction between them — with wealthy female passengers having near-certain survival and 3rd class male passengers facing near-certain death.
-
-This analysis demonstrates how structured EDA, combining data cleaning, visualization, and statistical testing, can extract meaningful, defensible insights from a well-known historical dataset.
+**Central Finding:**
+Survival on the Titanic was not random. It was systematically determined by gender
+(strongest predictor), passenger class (structural lifeboat access), and the interaction
+between them. This analysis demonstrates how structured EDA — combining documented
+data cleaning, purposeful visualization, and rigorous statistical testing — produces
+defensible, interview-ready insights from a real-world dataset.
 
 ---
-
-*Analysis completed as part of CodeAlpha Data Analytics Internship — Task 2*  
-*Dataset: Titanic Passenger Survival | Tools: Python, Pandas, NumPy, Matplotlib, Seaborn, SciPy*
+*Analysis completed as part of CodeAlpha Data Analytics Internship — Task 2*
+*Dataset: Titanic Passenger Survival | Python · Pandas · NumPy · Matplotlib · Seaborn · SciPy*
 """))
 
-# ---------------------------------------------------------------------------
-# BUILD THE NOTEBOOK
-# ---------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
+# BUILD NOTEBOOK
+# ─────────────────────────────────────────────────────────────
 nb = new_notebook(cells=cells)
 nb.metadata['kernelspec'] = {
     'display_name': 'Python 3',
@@ -1456,14 +1378,21 @@ nb.metadata['kernelspec'] = {
 }
 nb.metadata['language_info'] = {
     'name': 'python',
-    'version': '3.12.0'
+    'version': '3.12.0',
+    'codemirror_mode': {'name': 'ipython', 'version': 3},
+    'file_extension': '.py',
+    'mimetype': 'text/x-ipython',
+    'pygments_lexer': 'ipython3'
 }
 
-import os
-output_path = os.path.join(os.path.dirname(__file__), 'titanic_eda.ipynb')
-with open(output_path, 'w', encoding='utf-8') as f:
+out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'titanic_eda.ipynb')
+with open(out_path, 'w', encoding='utf-8') as f:
     nbformat.write(nb, f)
 
-print(f'Notebook created: {output_path}')
-print(f'Total cells: {len(cells)}')
+code_count = sum(1 for c in cells if c['cell_type'] == 'code')
+md_count   = sum(1 for c in cells if c['cell_type'] == 'markdown')
+print(f'Notebook written: {out_path}')
+print(f'Total cells  : {len(cells)}')
+print(f'Code cells   : {code_count}')
+print(f'Markdown cells: {md_count}')
 print('Done.')
